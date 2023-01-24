@@ -1,4 +1,4 @@
-package com.example.habit.ui.theme
+package com.example.habit.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
