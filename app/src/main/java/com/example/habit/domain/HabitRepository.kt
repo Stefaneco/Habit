@@ -2,18 +2,29 @@ package com.example.habit.domain
 
 import com.example.habit.data.room.AppDatabase
 import com.example.habit.domain.model.Habit
+import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
 
 class HabitRepository(db: AppDatabase) : IHabitRepository {
     private val habitDao = db.habitDao()
     private val habitHistoryDao = db.habitHistoryDao()
+    private val categoryDao = db.habitCategoryDao()
 
     override suspend fun getAllHabits() : List<Habit> {
-        return habitDao.getAllHabits().map { Habit.fromHabitEntity(it) }
+        return habitDao.getAllHabitsDto().map { Habit.fromHabitDto(it) }
     }
 
     override suspend fun insertHabit(habit: Habit) : Long{
+        val isCategoryInDb = categoryDao.isCategoryNameInDb(habit.category.name)
+        if(!isCategoryInDb) {
+            val categoryId = categoryDao.insertHabitCategory(HabitCategory.toHabitCategoryEntity(habit.category))
+            habit.category.id = categoryId
+        }
+        else if(habit.category.id == 0L){
+            val category = categoryDao.getHabitCategoryByName(habit.category.name)
+            habit.category.id = category.id
+        }
         return habitDao.insertHabit(Habit.toHabitEntity(habit))
     }
 

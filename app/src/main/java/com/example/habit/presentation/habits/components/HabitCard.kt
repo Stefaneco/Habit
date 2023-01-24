@@ -87,8 +87,7 @@ fun HabitCard(
                         .fillMaxWidth(0.7f)
                 ) {
                     Text(text = habit.name, style = MaterialTheme.typography.headlineSmall)
-                    Text(text = habit.category, style = MaterialTheme.typography.bodySmall)
-
+                    Text(text = habit.category.name + " " + habit.category.id.toString(), style = MaterialTheme.typography.bodySmall)
                 }
                 Row(
                     modifier = Modifier

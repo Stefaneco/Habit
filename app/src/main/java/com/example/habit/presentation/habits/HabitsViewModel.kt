@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habit.domain.IHabitRepository
 import com.example.habit.domain.model.Habit
+import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,7 +54,7 @@ class HabitsViewModel @Inject constructor(
                         name = newHabitName,
                         start = DateTimeUtil.toEpochMillis(startDateTime),
                         nextOccurrence = DateTimeUtil.toEpochMillis(startDateTime) + DateTimeUtil.DAY_IN_MILLIS * 2,
-                        category = newHabitCategory,
+                        category = HabitCategory(0,newHabitCategory),
                         repetition = newHabitRepetition
                     )
                     viewModelScope.launch {

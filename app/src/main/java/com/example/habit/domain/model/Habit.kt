@@ -1,5 +1,6 @@
 package com.example.habit.domain.model
 
+import com.example.habit.data.room.dto.HabitDto
 import com.example.habit.data.room.entities.HabitEntity
 
 data class Habit(
@@ -8,17 +9,27 @@ data class Habit(
     val start: Long,
     var nextOccurrence: Long,
     val repetition: String,
-    val category: String
+    val category: HabitCategory
 ) {
     companion object {
-        fun fromHabitEntity(habitEntity: HabitEntity): Habit {
+        /*fun fromHabitEntity(habitEntity: HabitEntity): Habit {
             return Habit(
                 id = habitEntity.id,
                 name = habitEntity.name,
                 start = habitEntity.start,
                 nextOccurrence = habitEntity.nextOccurrence,
-                repetition = habitEntity.repetition,
-                category = habitEntity.category
+                repetition = habitEntity.repetition
+            )
+        }*/
+
+        fun fromHabitDto(habitDto: HabitDto) : Habit {
+            return Habit(
+                id = habitDto.id,
+                name = habitDto.name,
+                start = habitDto.start,
+                nextOccurrence = habitDto.nextOccurrence,
+                repetition = habitDto.repetition,
+                category = HabitCategory(habitDto.categoryId, habitDto.categoryName)
             )
         }
 
@@ -30,7 +41,7 @@ data class Habit(
                 start = habit.start,
                 nextOccurrence = habit.nextOccurrence,
                 repetition = habit.repetition,
-                category = habit.category
+                categoryId = habit.category.id
             )
         }
     }
