@@ -26,7 +26,7 @@ class HabitsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(
                 isLoading = false,
-                habits = habitsRepository.getAllHabits()
+                habits = habitsRepository.getAllHabits().sortedBy { DateTimeUtil.fromEpochMillis(it.start).time }
             ) }
         }
     }

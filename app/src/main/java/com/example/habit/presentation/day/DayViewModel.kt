@@ -29,7 +29,7 @@ class DayViewModel @Inject constructor(
                 habitHistoryItems = habitRepository.getHabitHistoryItems(
                     fromTimestamp = DateTimeUtil.dayStartEpochMillis(),
                     toTimestamp = DateTimeUtil.dayEndEpochMillis()
-                )
+                ).sortedBy { item -> item.dateTimeTimestamp }
             ) }
         }
     }
@@ -47,8 +47,10 @@ class DayViewModel @Inject constructor(
                 viewModelScope.launch {
                     habitRepository.upsertHabitHistoryItem(updatedItem)
                     _state.update { it.copy(
-                        habitHistoryItems = habitHistoryItems.map {
-                                old -> if(old.id == updatedItem.id) updatedItem else old },
+                        habitHistoryItems = habitHistoryItems
+                            .map {
+                                old -> if(old.id == updatedItem.id) updatedItem else old }
+                            .sortedBy { item -> item.dateTimeTimestamp },
                         isHabitItemUpdating = false
                     ) }
                 }
@@ -61,7 +63,7 @@ class DayViewModel @Inject constructor(
                         habitHistoryItems = habitRepository.getHabitHistoryItems(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
-                        ),
+                        ).sortedBy { item -> item.dateTimeTimestamp },
                         dateString = DateTimeUtil.formatDate(newDate)
                     ) }
                 }
@@ -74,7 +76,7 @@ class DayViewModel @Inject constructor(
                         habitHistoryItems = habitRepository.getHabitHistoryItems(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
-                        ),
+                        ).sortedBy { item -> item.dateTimeTimestamp },
                         dateString = DateTimeUtil.formatDate(newDate)
                     ) }
                 }
