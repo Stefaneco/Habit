@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AllInbox
+import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.CheckBox
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -34,6 +35,11 @@ fun HabitsScreen(
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
                     label = { Text("My Habits") },
                     onClick = { /*TODO*/ })
+                NavigationBarItem(
+                    selected = false,
+                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
+                    label = { Text("Statistics") },
+                    onClick = { onEvent(HabitsScreenEvent.NavigateToStatistics) })
             }
         }
     ){ paddingValues ->

@@ -65,6 +65,11 @@ fun DayScreen(
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
                     label = { Text("My Habits") },
                     onClick = { onEvent(DayScreenEvent.NavigateToHabitsScreen) })
+                NavigationBarItem(
+                    selected = false,
+                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
+                    label = { Text("Statistics") },
+                    onClick = { onEvent(DayScreenEvent.NavigateToStatistics) })
             }
         },
 

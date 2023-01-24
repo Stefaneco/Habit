@@ -1,5 +1,6 @@
 package com.example.habit.presentation.habits
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habit.domain.IHabitRepository
@@ -47,6 +48,7 @@ class HabitsViewModel @Inject constructor(
                 with(_state.value){
                     if(!isValidHabitName(newHabitName)) return
                     val startDateTime = DateTimeUtil.now().date.atTime(newHabitTime)
+                    Log.e("HabitsViewModel", startDateTime.toString())
                     val newHabit = Habit(
                         name = newHabitName,
                         start = DateTimeUtil.toEpochMillis(startDateTime),

@@ -29,6 +29,9 @@ import com.example.habit.presentation.day.DayViewModel
 import com.example.habit.presentation.habits.HabitsScreen
 import com.example.habit.presentation.habits.HabitsScreenEvent
 import com.example.habit.presentation.habits.HabitsViewModel
+import com.example.habit.presentation.statistics.StatisticsScreen
+import com.example.habit.presentation.statistics.StatisticsScreenEvent
+import com.example.habit.presentation.statistics.StatisticsViewModel
 import com.example.habit.presentation.theme.HabitTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
@@ -86,6 +89,13 @@ fun HabitRoot(){
                                 }
                             }
                         }
+                        is HabitsScreenEvent.NavigateToStatistics -> {
+                            navController.navigate(Routes.STATISTICS){
+                                popUpTo(Routes.HABITS) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                         else -> {viewModel.onEvent(event)}
                     }
                 })
@@ -102,7 +112,37 @@ fun HabitRoot(){
                                 }
                             }
                         }
+                        is DayScreenEvent.NavigateToStatistics -> {
+                            navController.navigate(Routes.STATISTICS){
+                                popUpTo(Routes.DAY) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                         else -> { viewModel.onEvent(event) }
+                    }
+                })
+            }
+            composable(Routes.STATISTICS){
+                val viewModel = hiltViewModel<StatisticsViewModel>()
+                val state by viewModel.state.collectAsState()
+                StatisticsScreen(state = state, onEvent = { event ->
+                    when(event){
+                        is StatisticsScreenEvent.NavigateToDayScreen -> {
+                            navController.navigate(Routes.DAY){
+                                popUpTo(Routes.STATISTICS) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                        is StatisticsScreenEvent.NavigateToHabitsScreen -> {
+                            navController.navigate(Routes.HABITS){
+                                popUpTo(Routes.STATISTICS) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                        else -> {viewModel.onEvent(event)}
                     }
                 })
             }
