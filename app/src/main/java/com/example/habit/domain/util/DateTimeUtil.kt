@@ -59,6 +59,23 @@ object DateTimeUtil {
         return formatDate(dateTime.date)
     }
 
+    fun formatFriendlyDate(millis: Long): String {
+        return formatFriendlyDate(fromEpochMillis(millis).date)
+    }
+
+    fun formatFriendlyDate(dateTime: LocalDateTime): String {
+        return formatFriendlyDate(dateTime.date)
+    }
+
+    fun formatFriendlyDate(dateTime: LocalDate): String {
+        return when(now().date.daysUntil(dateTime)){
+            -1 -> { "Yesterday" }
+            0 -> { "Today" }
+            1 -> { "Tomorrow" }
+            else -> { formatDate(dateTime) }
+        }
+    }
+
     fun formatDate(date: LocalDate): String {
         val month = if(date.monthNumber < 10) "0${date.monthNumber}" else date.monthNumber
         val day = if(date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth

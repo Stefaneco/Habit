@@ -50,7 +50,7 @@ fun HabitsScreen(
                 contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
             ){
                 items(state.habits) { habit ->
-                    HabitCard(habit = habit)
+                    HabitCard(habit = habit, onEvent)
                 }
             }
         }
@@ -64,7 +64,7 @@ fun HabitsScreen(
             onEvent = onEvent,
             modifier = Modifier.padding(paddingValues)
         )
-        else Column(modifier = Modifier.fillMaxSize().padding(paddingValues),
+        else Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(bottom = 8.dp),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally)
         {

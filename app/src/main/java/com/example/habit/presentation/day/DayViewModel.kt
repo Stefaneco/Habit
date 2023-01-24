@@ -64,7 +64,7 @@ class DayViewModel @Inject constructor(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
-                        dateString = DateTimeUtil.formatDate(newDate)
+                        dateString = DateTimeUtil.formatFriendlyDate(newDate)
                     ) }
                 }
             }
@@ -77,7 +77,7 @@ class DayViewModel @Inject constructor(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
-                        dateString = DateTimeUtil.formatDate(newDate)
+                        dateString = DateTimeUtil.formatFriendlyDate(newDate)
                     ) }
                 }
             }

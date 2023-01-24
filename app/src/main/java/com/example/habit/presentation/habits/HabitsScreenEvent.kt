@@ -11,4 +11,5 @@ sealed class HabitsScreenEvent {
     data class EditNewHabitRepetition(val repetition: String) : HabitsScreenEvent()
     data class EditNewHabitTime(val time: LocalTime): HabitsScreenEvent()
     object NavigateToDayScreen : HabitsScreenEvent()
+    data class DeleteHabit(val habitId: Long) : HabitsScreenEvent()
 }

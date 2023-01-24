@@ -104,6 +104,16 @@ class HabitsViewModel @Inject constructor(
                     newHabitTime = event.time
                 ) }
             }
+            is HabitsScreenEvent.DeleteHabit -> {
+                viewModelScope.launch {
+                    habitsRepository.deleteHabit(event.habitId)
+                }
+                val newHabits = _state.value.habits.toMutableList()
+                newHabits.removeIf { it.id == event.habitId }
+                _state.update { it.copy(
+                    habits = newHabits
+                ) }
+            }
             else -> {}
         }
     }
