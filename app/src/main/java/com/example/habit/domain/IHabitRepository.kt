@@ -8,6 +8,7 @@ interface IHabitRepository {
     suspend fun getAllHabits() : List<Habit>
     suspend fun insertHabit(habit: Habit) : Long
     suspend fun getHabitHistoryItems(fromTimestamp: Long, toTimestamp: Long) : List<HabitHistoryItem>
+    suspend fun getHabitHistoryItems(fromTimestamp: Long, toTimestamp: Long, categoryId : Long) : List<HabitHistoryItem>
     suspend fun insertHabitHistoryItems(habitItems: List<HabitHistoryItem>)
     suspend fun updateHabits(habits: List<Habit>)
     suspend fun upsertHabitHistoryItem(habitHistoryItem: HabitHistoryItem)

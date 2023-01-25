@@ -66,6 +66,7 @@ class HabitsViewModel @Inject constructor(
                             isValidNewHabit = false,
                             habits = newHabitList
                         ) }
+
                         val newHabitHistoryItems = mutableListOf(
                             HabitHistoryItem(
                                 habitId = newHabitId,
@@ -82,6 +83,14 @@ class HabitsViewModel @Inject constructor(
                                 dateTimeTimestamp = newHabit.start
                             )
                         )
+                        for(i in 1..10) {
+                            newHabitHistoryItems.add(
+                                HabitHistoryItem(
+                                    habitId = newHabitId,
+                                    dateTimeTimestamp = newHabit.start - DateTimeUtil.DAY_IN_MILLIS * i
+                                )
+                            )
+                        }
                         habitsRepository.insertHabitHistoryItems(newHabitHistoryItems)
                     }
                 }

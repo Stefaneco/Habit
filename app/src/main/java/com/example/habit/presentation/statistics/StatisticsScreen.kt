@@ -14,7 +14,8 @@ import androidx.compose.ui.Modifier
 @Composable
 fun StatisticsScreen(
     state: StatisticsScreenState,
-    onEvent: (StatisticsScreenEvent) -> Unit
+    onEvent: (StatisticsScreenEvent) -> Unit,
+    content: @Composable () -> Unit = {}
 ) {
     Scaffold(
         bottomBar = {
@@ -38,7 +39,7 @@ fun StatisticsScreen(
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            Text("Stats")
+            content()
         }
     }
 }

@@ -76,7 +76,7 @@ object DateTimeUtil {
         }
     }
 
-    fun formatDate(date: LocalDate): String {
+    fun formatDate(date: LocalDate, getYear: Boolean = true): String {
         val month = if(date.monthNumber < 10) "0${date.monthNumber}" else date.monthNumber
         val day = if(date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth
         val year = date.year
@@ -85,8 +85,10 @@ object DateTimeUtil {
             append(day)
             append(".")
             append(month)
-            append(".")
-            append(year)
+            if(getYear) {
+                append(".")
+                append(year)
+            }
         }
     }
 

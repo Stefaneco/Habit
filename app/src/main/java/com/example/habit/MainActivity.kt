@@ -32,6 +32,8 @@ import com.example.habit.presentation.habits.HabitsViewModel
 import com.example.habit.presentation.statistics.StatisticsScreen
 import com.example.habit.presentation.statistics.StatisticsScreenEvent
 import com.example.habit.presentation.statistics.StatisticsViewModel
+import com.example.habit.presentation.statistics.components.categoryAmountChart.CategoryAmountChart
+import com.example.habit.presentation.statistics.components.categoryAmountChart.CategoryAmountChartViewModel
 import com.example.habit.presentation.theme.HabitTheme
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
@@ -126,6 +128,10 @@ fun HabitRoot(){
             composable(Routes.STATISTICS){
                 val viewModel = hiltViewModel<StatisticsViewModel>()
                 val state by viewModel.state.collectAsState()
+
+                val categoryAmountChartViewModel = hiltViewModel<CategoryAmountChartViewModel>()
+                val chartState by categoryAmountChartViewModel.state.collectAsState()
+
                 StatisticsScreen(state = state, onEvent = { event ->
                     when(event){
                         is StatisticsScreenEvent.NavigateToDayScreen -> {
@@ -144,7 +150,9 @@ fun HabitRoot(){
                         }
                         else -> {viewModel.onEvent(event)}
                     }
-                })
+                }){
+                    CategoryAmountChart(state = chartState)
+                }
             }
         }
     }

@@ -50,6 +50,15 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
             .map { HabitHistoryItem.fromHabitHistoryItemDto(it) }
     }
 
+    override suspend fun getHabitHistoryItems(
+        fromTimestamp: Long,
+        toTimestamp: Long,
+        categoryId: Long
+    ): List<HabitHistoryItem> {
+        return habitHistoryDao.getHabitHistoryItemDtos(fromTimestamp,toTimestamp,categoryId)
+            .map { HabitHistoryItem.fromHabitHistoryItemDto(it) }
+    }
+
     override suspend fun insertHabitHistoryItems(habitItems: List<HabitHistoryItem>) {
         habitHistoryDao.insertAllHabitHistoryItems(habitItems.map { HabitHistoryItem.toHabitHistoryItemEntity(it) })
     }

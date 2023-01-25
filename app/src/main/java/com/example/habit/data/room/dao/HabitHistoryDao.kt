@@ -24,10 +24,23 @@ interface HabitHistoryDao {
             "habitHistory.isDone AS isDone," +
             "habitHistory.dateTimeTimestamp AS dateTimeTimestamp," +
             "habits.name AS habitName " +
-            "FROM habitHistory, habits " +
+            "FROM habitHistory " +
+            "INNER JOIN habits ON habits.id = habitHistory.habitId " +
             "WHERE habitHistory.habitId = habits.Id " +
             "AND habitHistory.dateTimeTimestamp BETWEEN :from AND :to")
     suspend fun getHabitHistoryItemDtos(from: Long, to: Long) : List<HabitHistoryItemDto>
+
+    @Query("SELECT habitHistory.id AS id, " +
+            "habitHistory.habitId as habitId, " +
+            "habitHistory.isDone AS isDone," +
+            "habitHistory.dateTimeTimestamp AS dateTimeTimestamp," +
+            "habits.name AS habitName " +
+            "FROM habitHistory " +
+            "INNER JOIN habits ON habits.id = habitHistory.habitId " +
+            "WHERE habitHistory.habitId = habits.Id " +
+            "AND habits.categoryId = :categoryId " +
+            "AND habitHistory.dateTimeTimestamp BETWEEN :from AND :to")
+    suspend fun getHabitHistoryItemDtos(from: Long, to: Long, categoryId: Long) : List<HabitHistoryItemDto>
 
     @Query("DELETE FROM habitHistory WHERE habitId=:habitId")
     suspend fun deleteHistoryItemsByHabitId(habitId: Long)
