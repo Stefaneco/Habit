@@ -14,13 +14,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.habit.presentation.statistics.components.categoryAmountChart.model.CategoryAmountChartInfo
+import com.example.habit.presentation.statistics.model.NameAndAmountInfo
 import java.lang.Integer.min
 import kotlin.math.roundToInt
 
 @Composable
 fun CategoryAmountChart(
-    dataSet: List<CategoryAmountChartInfo> = emptyList(),
+    dataSet: List<NameAndAmountInfo> = emptyList(),
 ) {
 
     val upperValue = (dataSet.maxOfOrNull { it.amount } ?: 0).coerceAtLeast(3)

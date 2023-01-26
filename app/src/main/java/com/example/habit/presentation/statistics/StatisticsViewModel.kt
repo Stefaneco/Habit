@@ -6,7 +6,7 @@ import com.example.habit.domain.IHabitRepository
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
 import com.example.habit.domain.util.rangeTo
-import com.example.habit.presentation.statistics.components.categoryAmountChart.model.CategoryAmountChartInfo
+import com.example.habit.presentation.statistics.model.NameAndAmountInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +26,7 @@ class StatisticsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            updateCategoryAmountChartDataSet()
+            updateDataSets()
             _state.update { it.copy(
                 categories = habitRepository.getAllCategories()
             ) }
@@ -61,7 +61,7 @@ class StatisticsViewModel @Inject constructor(
                     datePeriodString = "${event.days} days",
                     isDatePeriodDropdownDisplayed = false
                 ) }
-                updateCategoryAmountChartDataSet()
+                updateDataSets()
             }
             is StatisticsScreenEvent.SetCategory -> {
                 if(event.category.id == 0L){
@@ -78,13 +78,13 @@ class StatisticsViewModel @Inject constructor(
                     isCategorySelected = true,
                     isCategoryDropdownDisplayed = false
                 ) }
-                updateCategoryAmountChartDataSet()
+                updateDataSets()
             }
             else -> {}
         }
     }
 
-    private fun updateCategoryAmountChartDataSet(){
+    private fun updateDataSets(){
         viewModelScope.launch {
             val habitItems =
                 if(_state.value.categoryId == 0L)
@@ -97,19 +97,30 @@ class StatisticsViewModel @Inject constructor(
                     fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
                     toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate), categoryId = _state.value.categoryId
                 )
-            val groupedItems = habitItems.reversed()
+
+            val groupedByDateItems = habitItems.reversed()
                 .filter { it.isDone }
                 .groupBy { DateTimeUtil.fromEpochMillis(it.dateTimeTimestamp).date }
             val dateMap = mutableMapOf<LocalDate, List<HabitHistoryItem>>()
             for(date in _state.value.startDate.._state.value.endDate){
-                dateMap[date] = groupedItems[date] ?: emptyList()
+                dateMap[date] = groupedByDateItems[date] ?: emptyList()
             }
-            val chartDataSet = mutableListOf<CategoryAmountChartInfo>()
+            val chartDataSet = mutableListOf<NameAndAmountInfo>()
             for (group in dateMap){
-                chartDataSet.add(CategoryAmountChartInfo(DateTimeUtil.formatDate(group.key, getYear = false),group.value.size))
+                chartDataSet.add(NameAndAmountInfo(DateTimeUtil.formatDate(group.key, getYear = false),group.value.size))
             }
+
+            val groupedByNameItems = habitItems
+                .filter { it.isDone }
+                .groupBy { it.habitName }
+            val nameDataSet = mutableListOf<NameAndAmountInfo>()
+            for (group in groupedByNameItems){
+                nameDataSet.add(NameAndAmountInfo(group.key, group.value.size))
+            }
+
             _state.update { it.copy(
-                categoryAmountChartDataSet = chartDataSet
+                categoryAmountChartDataSet = chartDataSet,
+                amountListDataSet = nameDataSet.sortedByDescending { info -> info.amount }
             ) }
         }
     }

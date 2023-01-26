@@ -108,8 +108,15 @@ fun StatisticsScreen(
                     }
                 }
             }
-
             content()
+            for (data in state.amountListDataSet){
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(text = data.name)
+                    Text(text = data.amount.toString())
+                }
+            }
         }
     }
 }
