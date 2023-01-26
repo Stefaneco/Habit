@@ -17,4 +17,7 @@ interface HabitCategoryDto {
 
     @Query("SELECT * FROM categories WHERE name=:name")
     suspend fun getHabitCategoryByName(name: String) : HabitCategoryEntity
+
+    @Query("SELECT * FROM categories")
+    suspend fun getAllCategories(): List<HabitCategoryEntity>
 }

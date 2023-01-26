@@ -1,6 +1,7 @@
 package com.example.habit.domain
 
 import com.example.habit.domain.model.Habit
+import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
 
 interface IHabitRepository {
@@ -13,4 +14,5 @@ interface IHabitRepository {
     suspend fun updateHabits(habits: List<Habit>)
     suspend fun upsertHabitHistoryItem(habitHistoryItem: HabitHistoryItem)
     suspend fun deleteHabit(habitId: Long, deletePlanned: Boolean = true, deleteHistory: Boolean = false)
+    suspend fun getAllCategories() : List<HabitCategory>
 }

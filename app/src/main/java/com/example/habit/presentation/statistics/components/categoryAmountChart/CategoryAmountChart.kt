@@ -26,6 +26,7 @@ fun CategoryAmountChart(
     val lowerValue = 0
 
     val textColor = MaterialTheme.colorScheme.onSurface
+    val rectColor = MaterialTheme.colorScheme.primary
     val spacing = 100f
     val density = LocalDensity.current
     val textPaint = remember(density) {
@@ -37,7 +38,7 @@ fun CategoryAmountChart(
     }
     val rectPaint = remember {
         Paint().apply {
-            color = textColor.toArgb()
+            color = rectColor.toArgb()
             textAlign = Paint.Align.CENTER
             textSize = density.run { 12.sp.toPx() }
         }
@@ -81,7 +82,6 @@ fun CategoryAmountChart(
         }
 
         //BOTTOM CAPTION
-
         val nofBottomCaptions = min(2,state.dataSet.size)
         drawContext.canvas.nativeCanvas.apply {
             for (i in 0 until nofBottomCaptions) {
@@ -102,17 +102,6 @@ fun CategoryAmountChart(
                 textPaint
             )
         }
-        /*(0 until state.dataSet.size - 1 step if (step <= 0) 1 else step).forEach { i ->
-            val data = state.dataSet[i]
-            drawContext.canvas.nativeCanvas.apply {
-                drawText(
-                    (data.name[0] + data.name[1].toString()),
-                    spacing + i * spacePerItem,
-                    size.height - 5,
-                    textPaint
-                )
-            }
-        }*/
     }
 
 

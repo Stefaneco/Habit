@@ -42,6 +42,10 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
         else if(deletePlanned) habitHistoryDao.deletePlannedHistoryItemsByHabitId(habitId, DateTimeUtil.nowEpochMillis())
     }
 
+    override suspend fun getAllCategories(): List<HabitCategory> {
+        return categoryDao.getAllCategories().map { HabitCategory.fromHabitCategoryEntity(it) }
+    }
+
     override suspend fun getHabitHistoryItems(
         fromTimestamp: Long,
         toTimestamp: Long

@@ -78,7 +78,7 @@ fun HabitRoot(){
         NavHost(
             modifier = Modifier.padding(padding),
             navController = navController,
-            startDestination = Routes.HABITS) {
+            startDestination = Routes.STATISTICS) {
             composable(route = Routes.HABITS){
                 val viewModel = hiltViewModel<HabitsViewModel>()
                 val state by viewModel.state.collectAsState()
