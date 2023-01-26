@@ -2,6 +2,7 @@ package com.example.habit.presentation.statistics
 
 import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.util.DateTimeUtil
+import com.example.habit.presentation.statistics.components.categoryAmountChart.model.CategoryAmountChartInfo
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
@@ -17,5 +18,7 @@ data class StatisticsScreenState (
     val categoryId: Long = 0,
     val categoryName: String = "Category",
     val isCategoryDropdownDisplayed: Boolean = false,
+
+    val categoryAmountChartDataSet: List<CategoryAmountChartInfo> = emptyList()
         )
 

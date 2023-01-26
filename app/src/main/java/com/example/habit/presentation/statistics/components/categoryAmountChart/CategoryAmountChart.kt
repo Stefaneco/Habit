@@ -14,15 +14,16 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.habit.presentation.statistics.components.categoryAmountChart.model.CategoryAmountChartInfo
 import java.lang.Integer.min
 import kotlin.math.roundToInt
 
 @Composable
 fun CategoryAmountChart(
-    state: CategoryAmountChartState
+    dataSet: List<CategoryAmountChartInfo> = emptyList(),
 ) {
 
-    val upperValue = (state.dataSet.maxOfOrNull { it.amount } ?: 0).coerceAtLeast(3)
+    val upperValue = (dataSet.maxOfOrNull { it.amount } ?: 0).coerceAtLeast(3)
     val lowerValue = 0
 
     val textColor = MaterialTheme.colorScheme.onSurface
@@ -44,7 +45,7 @@ fun CategoryAmountChart(
         }
     }
 
-    if (state.dataSet.isEmpty()) return
+    if (dataSet.isEmpty()) return
 
     Canvas(modifier = Modifier
         .fillMaxWidth()
@@ -52,15 +53,15 @@ fun CategoryAmountChart(
         .padding(16.dp)){
 
         //VARIABLES
-        val spacePerItem = (size.width - spacing) / state.dataSet.size
+        val spacePerItem = (size.width - spacing) / dataSet.size
 
         //DATA
-        for (i in 0 until state.dataSet.size){
+        for (i in 0 until dataSet.size){
             drawContext.canvas.nativeCanvas.apply {
                 val left = spacing + spacePerItem * i
                 val top =
-                    if(state.dataSet[i].amount == 0) size.height - spacing - 0.1f * size.height / (upperValue + 1)
-                    else size.height - spacing - state.dataSet[i].amount * size.height / (upperValue + 1)
+                    if(dataSet[i].amount == 0) size.height - spacing - 0.1f * size.height / (upperValue + 1)
+                    else size.height - spacing - dataSet[i].amount * size.height / (upperValue + 1)
                 val right = spacing + spacePerItem * (i+1) - 2
                 val bottom = size.height - spacing
                 drawRect(left, top, right, bottom, rectPaint)
@@ -82,22 +83,22 @@ fun CategoryAmountChart(
         }
 
         //BOTTOM CAPTION
-        val nofBottomCaptions = min(2,state.dataSet.size)
+        val nofBottomCaptions = min(2,dataSet.size)
         drawContext.canvas.nativeCanvas.apply {
             for (i in 0 until nofBottomCaptions) {
                 val fraction = (i.toFloat()/nofBottomCaptions)
-                val data = state.dataSet[(state.dataSet.size * fraction).toInt()]
+                val data = dataSet[(dataSet.size * fraction).toInt()]
                 drawText(
                     data.name,
-                    spacing + (state.dataSet.size * fraction).toInt() * spacePerItem,
+                    spacing + (dataSet.size * fraction).toInt() * spacePerItem,
                     size.height - 5,
                     textPaint
                 )
             }
-            val data = state.dataSet[(state.dataSet.size-1)]
+            val data = dataSet[(dataSet.size-1)]
             drawText(
                 data.name,
-                spacing + (state.dataSet.size-1) * spacePerItem,
+                spacing + (dataSet.size-1) * spacePerItem,
                 size.height - 5,
                 textPaint
             )

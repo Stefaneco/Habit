@@ -29,20 +29,20 @@ fun StatisticsScreen(
                         textAlign = TextAlign.Center)
                 },
                 navigationIcon = {
-                    IconButton(onClick = {  }) {
+                    /*IconButton(onClick = {  }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowLeft,
                             contentDescription = "Localized description"
                         )
-                    }
+                    }*/
                 },
                 actions = {
-                    IconButton(onClick = {  }) {
+                    /*IconButton(onClick = {  }) {
                         Icon(
                             imageVector = Icons.Filled.DateRange,
                             contentDescription = "Localized description"
                         )
-                    }
+                    }*/
                 },
                 scrollBehavior = scrollBehavior)
         },
