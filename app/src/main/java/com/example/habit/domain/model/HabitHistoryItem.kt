@@ -8,24 +8,17 @@ data class HabitHistoryItem(
     val habitName: String = "",
     val habitId: Long,
     var isDone: Boolean = false,
+    var doneTimestamp: Long? = null,
     val dateTimeTimestamp: Long
 ) {
     companion object {
-        fun fromHabitHistoryItemEntity(habitHistoryItemEntity: HabitHistoryItemEntity) : HabitHistoryItem{
-            return HabitHistoryItem(
-                id = habitHistoryItemEntity.id,
-                habitId = habitHistoryItemEntity.habitId,
-                isDone = habitHistoryItemEntity.isDone,
-                dateTimeTimestamp = habitHistoryItemEntity.dateTimeTimestamp
-            )
-        }
-
         fun fromHabitHistoryItemDto(habitHistoryItemDto: HabitHistoryItemDto): HabitHistoryItem {
             return HabitHistoryItem(
                 id = habitHistoryItemDto.id,
                 habitName = habitHistoryItemDto.habitName,
                 habitId = habitHistoryItemDto.habitId,
                 isDone = habitHistoryItemDto.isDone,
+                doneTimestamp = habitHistoryItemDto.doneTimestamp,
                 dateTimeTimestamp = habitHistoryItemDto.dateTimeTimestamp
             )
         }
@@ -35,6 +28,7 @@ data class HabitHistoryItem(
                 id = habitHistoryItem.id,
                 habitId = habitHistoryItem.habitId,
                 isDone = habitHistoryItem.isDone,
+                doneTimestamp = habitHistoryItem.doneTimestamp,
                 dateTimeTimestamp = habitHistoryItem.dateTimeTimestamp
             )
         }

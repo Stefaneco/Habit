@@ -5,6 +5,7 @@ data class HabitHistoryItemDto(
     val habitName: String,
     val habitId: Long,
     val isDone: Boolean,
+    val doneTimestamp: Long?,
     val dateTimeTimestamp: Long,
 ) {
 }

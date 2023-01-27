@@ -40,6 +40,7 @@ class DayViewModel @Inject constructor(
                 val habitHistoryItems = _state.value.habitHistoryItems
                 val updatedItem = habitHistoryItems.first { item -> item.id == event.id }.apply {
                     isDone = !isDone
+                    doneTimestamp = if(isDone) DateTimeUtil.nowEpochMillis() else null
                 }
                 _state.update { it.copy(
                     isHabitItemUpdating = true
@@ -80,6 +81,23 @@ class DayViewModel @Inject constructor(
                         dateString = DateTimeUtil.formatFriendlyDate(newDate)
                     ) }
                 }
+            }
+            is DayScreenEvent.CloseItemEditor -> {
+                _state.update { it.copy(
+                    isItemEditorOpen = false
+                ) }
+            }
+            is DayScreenEvent.OpenItemEditor -> {
+                _state.update { it.copy(
+                    isItemEditorOpen = true,
+                    selectedItemId = event.itemId,
+                    selectedItemTime = DateTimeUtil.now().time
+                ) }
+            }
+            is DayScreenEvent.EditSelectedItemTime -> {
+                _state.update { it.copy(
+                    selectedItemTime = event.time
+                ) }
             }
             else -> {}
         }

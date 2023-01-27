@@ -8,5 +8,6 @@ data class HabitHistoryItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val habitId: Long,
     val isDone: Boolean,
+    val doneTimestamp: Long?,
     val dateTimeTimestamp: Long
 )

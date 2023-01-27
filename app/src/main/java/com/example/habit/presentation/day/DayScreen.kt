@@ -8,9 +8,11 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.example.habit.presentation.day.components.HabitHistoryItemCard
+import com.example.habit.presentation.day.components.HabitHistoryItemEditor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +78,8 @@ fun DayScreen(
     ) { paddingValues ->
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)) {
+            .padding(paddingValues)
+            .alpha(if (state.isItemEditorOpen) 0.7f else 1f)) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
@@ -85,6 +88,18 @@ fun DayScreen(
                     HabitHistoryItemCard(habitHistoryItem = item, onEvent)
                 }
             }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            if (state.isItemEditorOpen) HabitHistoryItemEditor(
+                itemId = state.selectedItemId,
+                time = state.selectedItemTime,
+                onEvent = onEvent
+            )
         }
     }
     
