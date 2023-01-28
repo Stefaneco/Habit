@@ -4,6 +4,7 @@ import com.example.habit.data.room.AppDatabase
 import com.example.habit.domain.model.Habit
 import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
+import com.example.habit.domain.model.dto.HabitName
 import com.example.habit.domain.util.DateTimeUtil
 
 class HabitRepository(db: AppDatabase) : IHabitRepository {
@@ -46,6 +47,14 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
         return categoryDao.getAllCategories().map { HabitCategory.fromHabitCategoryEntity(it) }
     }
 
+    override suspend fun getHabitsNamesByCategory(categoryId: Long): List<HabitName> {
+        return habitDao.getHabitNamesByCategoryId(categoryId).map { HabitName.fromHabitNameDto(it) }
+    }
+
+    override suspend fun getHabit(habitId: Long): Habit {
+        return Habit.fromHabitDto(habitDao.getHabitDto(habitId))
+    }
+
     override suspend fun getHabitHistoryItems(
         fromTimestamp: Long,
         toTimestamp: Long
@@ -54,12 +63,13 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
             .map { HabitHistoryItem.fromHabitHistoryItemDto(it) }
     }
 
-    override suspend fun getHabitHistoryItems(
-        fromTimestamp: Long,
-        toTimestamp: Long,
-        categoryId: Long
-    ): List<HabitHistoryItem> {
-        return habitHistoryDao.getHabitHistoryItemDtos(fromTimestamp,toTimestamp,categoryId)
+    override suspend fun getHabitHistoryItemsByCategoryId(fromTimestamp: Long, toTimestamp: Long, categoryId: Long): List<HabitHistoryItem> {
+        return habitHistoryDao.getHabitHistoryItemDtosByCategoryId(fromTimestamp,toTimestamp,categoryId)
+            .map { HabitHistoryItem.fromHabitHistoryItemDto(it) }
+    }
+
+    override suspend fun getHabitHistoryItemsByHabitId(fromTimestamp: Long, toTimestamp: Long, habitId: Long): List<HabitHistoryItem> {
+        return habitHistoryDao.getHabitHistoryItemDtosByHabitId(fromTimestamp,toTimestamp,habitId)
             .map { HabitHistoryItem.fromHabitHistoryItemDto(it) }
     }
 

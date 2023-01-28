@@ -1,6 +1,7 @@
 package com.example.habit.presentation.statistics
 
 import com.example.habit.domain.model.HabitCategory
+import com.example.habit.domain.model.dto.HabitName
 
 sealed class StatisticsScreenEvent {
     object NavigateToDayScreen : StatisticsScreenEvent()
@@ -11,4 +12,7 @@ sealed class StatisticsScreenEvent {
     object OpenPeriodDropdown : StatisticsScreenEvent()
     data class SetPeriodInDays(val days: Int) : StatisticsScreenEvent()
     data class SetCategory(val category: HabitCategory) : StatisticsScreenEvent()
+    object OpenHabitDropdown : StatisticsScreenEvent()
+    object DismissHabitDropdown : StatisticsScreenEvent()
+    data class SetHabit(val habitName: HabitName) : StatisticsScreenEvent()
 }

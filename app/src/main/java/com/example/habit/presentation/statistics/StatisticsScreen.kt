@@ -1,6 +1,8 @@
 package com.example.habit.presentation.statistics
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -9,17 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.habit.domain.model.HabitCategory
+import com.example.habit.presentation.statistics.components.CategoryAmountChart
+import com.example.habit.presentation.statistics.components.CompletionTimeChart
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticsScreen(
     state: StatisticsScreenState,
-    onEvent: (StatisticsScreenEvent) -> Unit,
-    content: @Composable () -> Unit = {}
+    onEvent: (StatisticsScreenEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
+        //modifier = Modifier.verticalScroll(rememberScrollState()),
         topBar = {
             TopAppBar(
                 title = {
@@ -66,7 +70,7 @@ fun StatisticsScreen(
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
+        Column(modifier = Modifier.padding(paddingValues).verticalScroll(rememberScrollState())) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,7 +112,9 @@ fun StatisticsScreen(
                     }
                 }
             }
-            content()
+            CategoryAmountChart(
+                dataSet = state.categoryAmountChartDataSet
+            )
             for (data in state.amountListDataSet){
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
@@ -117,6 +123,41 @@ fun StatisticsScreen(
                     Text(text = data.amount.toString())
                 }
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Column() {
+                    FilterChip(
+                        selected = state.isHabitSelected,
+                        onClick = { onEvent(StatisticsScreenEvent.OpenHabitDropdown) },
+                        label = { Text(state.selectedHabitName) },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowDropDown,
+                                contentDescription = "Dropdown"
+                            )
+                        },
+                        enabled = state.isHabitChipEnabled)
+                    DropdownMenu(
+                        expanded = state.isHabitDropdownDisplayed,
+                        onDismissRequest = { onEvent(StatisticsScreenEvent.DismissHabitDropdown) }) {
+                        for (habit in state.habitNames) {
+                            DropdownMenuItem(
+                                text = { Text(habit.name) },
+                                onClick = { onEvent(StatisticsScreenEvent.SetHabit(habit)) })
+                        }
+                    }
+                }
+            }
+            CompletionTimeChart(
+                startDate = state.startDate,
+                endDate = state.endDate,
+                perfectCompletionTime = state.perfectCompletionTime,
+                dataSet = state.completionTimeDataSet
+            )
         }
     }
 }

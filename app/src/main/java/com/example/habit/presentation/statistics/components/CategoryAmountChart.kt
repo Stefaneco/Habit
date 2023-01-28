@@ -1,4 +1,4 @@
-package com.example.habit.presentation.statistics.components.categoryAmountChart
+package com.example.habit.presentation.statistics.components
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas

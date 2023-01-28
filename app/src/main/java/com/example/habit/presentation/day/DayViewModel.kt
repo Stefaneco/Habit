@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import javax.inject.Inject
@@ -37,6 +38,15 @@ class DayViewModel @Inject constructor(
     fun onEvent(event: DayScreenEvent){
         when(event){
             is DayScreenEvent.ChangeHabitHistoryItemState -> {
+                if(_state.value.date != DateTimeUtil.now().date){
+                    _state.update { it.copy(
+                        isItemEditorOpen = true,
+                        selectedItemId = event.id,
+                        selectedItemTime = DateTimeUtil.now().time
+                    ) }
+                    return
+                }
+
                 val habitHistoryItems = _state.value.habitHistoryItems
                 val updatedItem = habitHistoryItems.first { item -> item.id == event.id }.apply {
                     isDone = !isDone
@@ -65,7 +75,8 @@ class DayViewModel @Inject constructor(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
-                        dateString = DateTimeUtil.formatFriendlyDate(newDate)
+                        dateString = DateTimeUtil.formatFriendlyDate(newDate),
+                        isItemEditorOpen = false
                     ) }
                 }
             }
@@ -78,7 +89,8 @@ class DayViewModel @Inject constructor(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
-                        dateString = DateTimeUtil.formatFriendlyDate(newDate)
+                        dateString = DateTimeUtil.formatFriendlyDate(newDate),
+                        isItemEditorOpen = false
                     ) }
                 }
             }
@@ -98,6 +110,29 @@ class DayViewModel @Inject constructor(
                 _state.update { it.copy(
                     selectedItemTime = event.time
                 ) }
+            }
+            is DayScreenEvent.ChangeSelectedHabitHistoryItemState -> {
+                val habitHistoryItems = _state.value.habitHistoryItems
+                val updatedItem = habitHistoryItems.first { item -> item.id == _state.value.selectedItemId }.apply {
+                    isDone = true
+                    doneTimestamp = DateTimeUtil.toEpochMillis(
+                        DateTimeUtil.fromEpochMillis(dateTimeTimestamp).date.atTime(_state.value.selectedItemTime)
+                    )
+                }
+                _state.update { it.copy(
+                    isHabitItemUpdating = true,
+                    isItemEditorOpen = false
+                ) }
+                viewModelScope.launch {
+                    habitRepository.upsertHabitHistoryItem(updatedItem)
+                    _state.update { it.copy(
+                        habitHistoryItems = habitHistoryItems
+                            .map {
+                                    old -> if(old.id == updatedItem.id) updatedItem else old }
+                            .sortedBy { item -> item.dateTimeTimestamp },
+                        isHabitItemUpdating = false
+                    ) }
+                }
             }
             else -> {}
         }

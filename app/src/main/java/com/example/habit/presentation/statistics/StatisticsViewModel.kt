@@ -27,6 +27,7 @@ class StatisticsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             updateDataSets()
+            updateHabitNames()
             _state.update { it.copy(
                 categories = habitRepository.getAllCategories()
             ) }
@@ -61,7 +62,9 @@ class StatisticsViewModel @Inject constructor(
                     datePeriodString = "${event.days} days",
                     isDatePeriodDropdownDisplayed = false
                 ) }
-                updateDataSets()
+                viewModelScope.launch {
+                    updateDataSets()
+                }
             }
             is StatisticsScreenEvent.SetCategory -> {
                 if(event.category.id == 0L){
@@ -78,50 +81,104 @@ class StatisticsViewModel @Inject constructor(
                     isCategorySelected = true,
                     isCategoryDropdownDisplayed = false
                 ) }
-                updateDataSets()
+                viewModelScope.launch {
+                    updateDataSets()
+                    updateHabitNames()
+                }
+            }
+            is StatisticsScreenEvent.OpenHabitDropdown -> {
+                _state.update { it.copy(
+                  isHabitDropdownDisplayed = true
+                ) }
+            }
+            is StatisticsScreenEvent.DismissHabitDropdown -> {
+                _state.update { it.copy(
+                    isHabitDropdownDisplayed = false
+                ) }
+            }
+            is StatisticsScreenEvent.SetHabit -> {
+                _state.update { it.copy(
+                    selectedHabitName = event.habitName.name,
+                    selectedHabitId = event.habitName.id,
+                    isHabitSelected = true,
+                    isHabitDropdownDisplayed = false
+                ) }
+                viewModelScope.launch {
+                    updateHabitTimeDataSet()
+                }
             }
             else -> {}
         }
     }
 
-    private fun updateDataSets(){
-        viewModelScope.launch {
-            val habitItems =
-                if(_state.value.categoryId == 0L)
-                    habitRepository.getHabitHistoryItems(
-                    fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
-                    toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate)
-                )
-                else
-                    habitRepository.getHabitHistoryItems(
-                    fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
-                    toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate), categoryId = _state.value.categoryId
-                )
+    private suspend fun updateDataSets(){
+        val habitItems =
+            if(_state.value.categoryId == 0L)
+                habitRepository.getHabitHistoryItems(
+                fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
+                toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate)
+            )
+            else
+                habitRepository.getHabitHistoryItemsByCategoryId(
+                fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
+                toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate), categoryId = _state.value.categoryId
+            )
 
-            val groupedByDateItems = habitItems.reversed()
-                .filter { it.isDone }
-                .groupBy { DateTimeUtil.fromEpochMillis(it.dateTimeTimestamp).date }
-            val dateMap = mutableMapOf<LocalDate, List<HabitHistoryItem>>()
-            for(date in _state.value.startDate.._state.value.endDate){
-                dateMap[date] = groupedByDateItems[date] ?: emptyList()
-            }
-            val chartDataSet = mutableListOf<NameAndAmountInfo>()
-            for (group in dateMap){
-                chartDataSet.add(NameAndAmountInfo(DateTimeUtil.formatDate(group.key, getYear = false),group.value.size))
-            }
-
-            val groupedByNameItems = habitItems
-                .filter { it.isDone }
-                .groupBy { it.habitName }
-            val nameDataSet = mutableListOf<NameAndAmountInfo>()
-            for (group in groupedByNameItems){
-                nameDataSet.add(NameAndAmountInfo(group.key, group.value.size))
-            }
-
-            _state.update { it.copy(
-                categoryAmountChartDataSet = chartDataSet,
-                amountListDataSet = nameDataSet.sortedByDescending { info -> info.amount }
-            ) }
+        val groupedByDateItems = habitItems.reversed()
+            .filter { it.isDone }
+            .groupBy { DateTimeUtil.fromEpochMillis(it.dateTimeTimestamp).date }
+        val dateMap = mutableMapOf<LocalDate, List<HabitHistoryItem>>()
+        for(date in _state.value.startDate.._state.value.endDate){
+            dateMap[date] = groupedByDateItems[date] ?: emptyList()
         }
+        val chartDataSet = mutableListOf<NameAndAmountInfo>()
+        for (group in dateMap){
+            chartDataSet.add(NameAndAmountInfo(DateTimeUtil.formatDate(group.key, getYear = false),group.value.size))
+        }
+
+        val groupedByNameItems = habitItems
+            .filter { it.isDone }
+            .groupBy { it.habitName }
+        val nameDataSet = mutableListOf<NameAndAmountInfo>()
+        for (group in groupedByNameItems){
+            nameDataSet.add(NameAndAmountInfo(group.key, group.value.size))
+        }
+
+        _state.update { it.copy(
+            categoryAmountChartDataSet = chartDataSet,
+            amountListDataSet = nameDataSet.sortedByDescending { info -> info.amount }
+        ) }
+    }
+
+    private suspend fun updateHabitNames(){
+        val habitsNames = habitRepository.getHabitsNamesByCategory(_state.value.categoryId)
+        val selectedHabitName = if (_state.value.categoryId == 0L) "Select Category first" else "Select Habit"
+
+        _state.update { it.copy(
+            habitNames = habitsNames,
+            selectedHabitId = 0L,
+            selectedHabitName = selectedHabitName,
+            isHabitSelected = false,
+            isHabitChipEnabled = _state.value.categoryId != 0L
+        ) }
+    }
+
+    private suspend fun updateHabitTimeDataSet(){
+        val habitItems = habitRepository.getHabitHistoryItemsByHabitId(
+            fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
+            toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate),
+            habitId = _state.value.selectedHabitId
+        )
+
+        val habit = habitRepository.getHabit(_state.value.selectedHabitId)
+
+        val completionTimeDataSet = habitItems
+            .filter { it.doneTimestamp != null }
+            .map { DateTimeUtil.fromEpochMillis(it.doneTimestamp!!) }
+
+        _state.update { it.copy(
+            completionTimeDataSet = completionTimeDataSet,
+            perfectCompletionTime = DateTimeUtil.fromEpochMillis(habit.start).time
+        ) }
     }
 }

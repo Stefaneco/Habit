@@ -31,7 +31,6 @@ fun BottomCreator(
             .draggable(
                 orientation = Orientation.Vertical,
                 state = rememberDraggableState { delta ->
-                    println(offsetY)
                     if (offsetY + delta > 0) offsetY += delta
                 },
                 onDragStopped = {

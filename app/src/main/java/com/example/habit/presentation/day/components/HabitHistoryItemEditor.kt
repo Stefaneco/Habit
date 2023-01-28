@@ -14,7 +14,7 @@ fun HabitHistoryItemEditor(
 ) {
     BottomCreator(
         buttonText = "Done!",
-        buttonOnClick = { onEvent(DayScreenEvent.ChangeHabitHistoryItemState(itemId)) },
+        buttonOnClick = { onEvent(DayScreenEvent.ChangeSelectedHabitHistoryItemState) },
         onCloseEvent = { onEvent(DayScreenEvent.CloseItemEditor) }) {
         TimePicker(time = time, onSelectionEvent = { onEvent(DayScreenEvent.EditSelectedItemTime(it))})
     }

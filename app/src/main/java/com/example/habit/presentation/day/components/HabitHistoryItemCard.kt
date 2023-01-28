@@ -1,6 +1,5 @@
 package com.example.habit.presentation.day.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -15,7 +14,6 @@ import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
 import com.example.habit.presentation.day.DayScreenEvent
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HabitHistoryItemCard(
     habitHistoryItem: HabitHistoryItem,
@@ -26,11 +24,7 @@ fun HabitHistoryItemCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp, vertical = 4.dp)
-                /*.combinedClickable(
-                    onLongClick = {onEvent(DayScreenEvent.OpenItemEditor(habitHistoryItem.id))},
-                    onClick = {}
-                ),*/
-                .pointerInput(Unit){
+                .pointerInput(habitHistoryItem.id) {
                     detectTapGestures(
                         onLongPress = { onEvent(DayScreenEvent.OpenItemEditor(habitHistoryItem.id)) }
                     )

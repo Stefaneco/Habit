@@ -11,4 +11,5 @@ sealed class DayScreenEvent {
     object CloseItemEditor : DayScreenEvent()
     data class OpenItemEditor(val itemId: Long) : DayScreenEvent()
     data class EditSelectedItemTime(val time: LocalTime) : DayScreenEvent()
+    object ChangeSelectedHabitHistoryItemState: DayScreenEvent()
 }
