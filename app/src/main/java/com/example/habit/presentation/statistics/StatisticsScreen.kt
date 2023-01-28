@@ -106,6 +106,7 @@ fun StatisticsScreen(
                     DropdownMenu(
                         expanded = state.isDatePeriodDropdownDisplayed,
                         onDismissRequest = { onEvent(StatisticsScreenEvent.DismissPeriodDropdown) }) {
+                        DropdownMenuItem(text = { Text("7 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(7)) })
                         DropdownMenuItem(text = { Text("14 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(14)) })
                         DropdownMenuItem(text = { Text("30 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(30)) })
                         DropdownMenuItem(text = { Text("90 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(90)) })
