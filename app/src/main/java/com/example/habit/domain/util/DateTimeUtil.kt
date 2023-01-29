@@ -92,6 +92,20 @@ object DateTimeUtil {
         }
     }
 
+    fun formatShortDate(date: LocalDate): String {
+        val month = if(date.monthNumber < 10) "0${date.monthNumber}" else date.monthNumber
+        val day = if(date.dayOfMonth < 10) "0${date.dayOfMonth}" else date.dayOfMonth
+        val year = date.year.toString().takeLast(2)
+
+        return buildString {
+            append(day)
+            append(".")
+            append(month)
+            append(".")
+            append(year)
+        }
+    }
+
     fun formatTime(time: LocalTime): String {
         val hour = if(time.hour < 10) "0${time.hour}" else time.hour
         val minute = if(time.minute < 10) "0${time.minute}" else time.minute
