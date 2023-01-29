@@ -60,7 +60,9 @@ class HabitsViewModel @Inject constructor(
                     )
                     viewModelScope.launch {
                         val newHabitId = habitsRepository.insertHabit(newHabit)
-                        val newHabitList = habits + listOf(newHabit.copy(id = newHabitId))
+                        val newHabitList = (habits + listOf(newHabit.copy(id = newHabitId)))
+                            .sortedBy { DateTimeUtil.fromEpochMillis(it.start).time }
+
                         _state.update { it.copy(
                             isNewHabitCreatorOpen = false,
                             newHabitName = "",
@@ -102,20 +104,6 @@ class HabitsViewModel @Inject constructor(
                                 DateTimeUtil.now().date.atTime(newHabitTime)
                             ) + DateTimeUtil.DAY_IN_MILLIS * 2
                         )
-                        /*if(newHabitTime >= DateTimeUtil.now().time) newHabitHistoryItems.add(
-                            HabitHistoryItem(
-                                habitId = newHabitId,
-                                dateTimeTimestamp = newHabit.start
-                            )
-                        )*/
-                        /*for(i in 1..10) {
-                            newHabitHistoryItems.add(
-                                HabitHistoryItem(
-                                    habitId = newHabitId,
-                                    dateTimeTimestamp = newHabit.start - DateTimeUtil.DAY_IN_MILLIS * i
-                                )
-                            )
-                        }*/
                         habitsRepository.insertHabitHistoryItems(newHabitHistoryItems)
                     }
                 }
