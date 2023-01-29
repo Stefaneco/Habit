@@ -47,7 +47,7 @@ class HabitsViewModel @Inject constructor(
             }
             is HabitsScreenEvent.CreateNewHabit -> {
                 with(_state.value){
-                    if(!isValidHabitName(newHabitName)) return
+                    if(!isValidHabit(newHabitName, newHabitCategory)) return
                     val startDateTime = newHabitDate.atTime(newHabitTime)
                     val newHabit = Habit(
                         name = newHabitName,
@@ -123,12 +123,13 @@ class HabitsViewModel @Inject constructor(
             is HabitsScreenEvent.EditNewHabitName -> {
                 _state.update { it.copy(
                     newHabitName = event.name,
-                    isValidNewHabit = isValidHabitName(event.name)
+                    isValidNewHabit = isValidHabit(event.name, it.newHabitCategory)
                 ) }
             }
             is HabitsScreenEvent.EditNewHabitCategory -> {
                 _state.update { it.copy(
-                    newHabitCategory = event.category
+                    newHabitCategory = event.category,
+                    isValidNewHabit = isValidHabit(it.newHabitName, event.category)
                 ) }
             }
             is HabitsScreenEvent.EditNewHabitRepetition -> {
@@ -160,7 +161,7 @@ class HabitsViewModel @Inject constructor(
         }
     }
 
-    private fun isValidHabitName(name: String) : Boolean {
-        return name.isNotBlank()
+    private fun isValidHabit(name: String, categoryName: String) : Boolean {
+        return name.isNotBlank() && categoryName.isNotBlank()
     }
 }

@@ -1,5 +1,7 @@
 package com.example.habit.domain.util
 
+import com.example.habit.R
+import com.example.habit.domain.util.model.StringResource
 import kotlinx.datetime.*
 
 
@@ -59,20 +61,20 @@ object DateTimeUtil {
         return formatDate(dateTime.date)
     }
 
-    fun formatFriendlyDate(millis: Long): String {
+    fun formatFriendlyDate(millis: Long): StringResource {
         return formatFriendlyDate(fromEpochMillis(millis).date)
     }
 
-    fun formatFriendlyDate(dateTime: LocalDateTime): String {
+    fun formatFriendlyDate(dateTime: LocalDateTime): StringResource {
         return formatFriendlyDate(dateTime.date)
     }
 
-    fun formatFriendlyDate(dateTime: LocalDate): String {
+    fun formatFriendlyDate(dateTime: LocalDate): StringResource {
         return when(now().date.daysUntil(dateTime)){
-            -1 -> { "Yesterday" }
-            0 -> { "Today" }
-            1 -> { "Tomorrow" }
-            else -> { formatDate(dateTime) }
+            -1 -> { StringResource(R.string.yesterday,"Yesterday") }
+            0 -> { StringResource(R.string.today,"Today") }
+            1 -> { StringResource(R.string.tomorrow,"Tomorrow") }
+            else -> { StringResource(null, formatDate(dateTime)) }
         }
     }
 

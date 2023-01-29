@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.habit.R
 import com.example.habit.presentation.habits.components.HabitCard
 import com.example.habit.presentation.habits.components.HabitCreator
 
@@ -28,17 +30,17 @@ fun HabitsScreen(
                 NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.CheckBox, contentDescription = "") },
-                    label = { Text("Today") },
+                    label = { Text(stringResource(id = R.string.today)) },
                     onClick = { onEvent(HabitsScreenEvent.NavigateToDayScreen) })
                 NavigationBarItem(
                     selected = true,
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
-                    label = { Text("My Habits") },
+                    label = { Text(stringResource(id = R.string.my_habits)) },
                     onClick = { /*TODO*/ })
                 NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
-                    label = { Text("Statistics") },
+                    label = { Text(stringResource(id = R.string.statistics)) },
                     onClick = { onEvent(HabitsScreenEvent.NavigateToStatistics) })
             }
         }
@@ -70,12 +72,15 @@ fun HabitsScreen(
             onEvent = onEvent,
             modifier = Modifier.padding(paddingValues)
         )
-        else Column(modifier = Modifier.fillMaxSize().padding(paddingValues).padding(bottom = 8.dp),
+        else Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(bottom = 8.dp),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally)
         {
             Button(onClick = { onEvent(HabitsScreenEvent.OpenNewHabitCreator) }) {
-                Text(text = "New habit")
+                Text(text = stringResource(id = R.string.new_habit))
             }
         }
     }

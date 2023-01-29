@@ -2,6 +2,7 @@ package com.example.habit.presentation.statistics
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.habit.R
 import com.example.habit.domain.IHabitRepository
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
@@ -67,10 +68,10 @@ class StatisticsViewModel @Inject constructor(
                 }
             }
             is StatisticsScreenEvent.SetCategory -> {
-                if(event.category.id == 0L){
+                if(event.category == null){
                     _state.update { it.copy(
-                        categoryId = event.category.id,
-                        categoryName = "Category",
+                        categoryId = null,
+                        categoryName = null,
                         isCategorySelected = false,
                         isCategoryDropdownDisplayed = false
                     ) }
@@ -99,6 +100,7 @@ class StatisticsViewModel @Inject constructor(
             is StatisticsScreenEvent.SetHabit -> {
                 _state.update { it.copy(
                     selectedHabitName = event.habitName.name,
+                    selectedHabitNameResource = null,
                     selectedHabitId = event.habitName.id,
                     isHabitSelected = true,
                     isHabitDropdownDisplayed = false
@@ -113,7 +115,7 @@ class StatisticsViewModel @Inject constructor(
 
     private suspend fun updateDataSets(){
         val habitItems =
-            if(_state.value.categoryId == 0L)
+            if(_state.value.categoryId == null)
                 habitRepository.getHabitHistoryItems(
                 fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
                 toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate)
@@ -121,7 +123,7 @@ class StatisticsViewModel @Inject constructor(
             else
                 habitRepository.getHabitHistoryItemsByCategoryId(
                 fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
-                toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate), categoryId = _state.value.categoryId
+                toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate), categoryId = _state.value.categoryId!!
             )
 
         val groupedByDateItems = habitItems.reversed()
@@ -151,13 +153,14 @@ class StatisticsViewModel @Inject constructor(
     }
 
     private suspend fun updateHabitNames(){
-        val habitsNames = habitRepository.getHabitsNamesByCategory(_state.value.categoryId)
-        val selectedHabitName = if (_state.value.categoryId == 0L) "Select Category first" else "Select Habit"
+        val habitsNames = habitRepository.getHabitsNamesByCategory(_state.value.categoryId ?: 0)
+        val selectedHabitNameResource = if (_state.value.isCategorySelected) R.string.select_habit else R.string.select_category_first
 
         _state.update { it.copy(
             habitNames = habitsNames,
             selectedHabitId = 0L,
-            selectedHabitName = selectedHabitName,
+            selectedHabitName = "",
+            selectedHabitNameResource = selectedHabitNameResource,
             isHabitSelected = false,
             isHabitChipEnabled = _state.value.categoryId != 0L
         ) }

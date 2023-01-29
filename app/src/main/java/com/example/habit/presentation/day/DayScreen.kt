@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.habit.R
 import com.example.habit.presentation.day.components.HabitHistoryItemCard
 import com.example.habit.presentation.day.components.HabitHistoryItemEditor
 
@@ -32,13 +34,15 @@ fun DayScreen(
                 title = {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = state.dateString)
+                        text = state.dateStringResource?.let { stringResource(id = state.dateStringResource) }
+                            ?: state.dateString
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { onEvent(DayScreenEvent.MinusOneDay) }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowLeft,
-                            contentDescription = "Localized description"
+                            contentDescription = ""
                         )
                     }
                 },
@@ -46,13 +50,13 @@ fun DayScreen(
                     IconButton(onClick = {  }) {
                         Icon(
                             imageVector = Icons.Filled.DateRange,
-                            contentDescription = "Localized description"
+                            contentDescription = ""
                         )
                     }
                     IconButton(onClick = { onEvent(DayScreenEvent.PlusOneDay) }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowRight,
-                            contentDescription = "Localized description"
+                            contentDescription = ""
                         )
                     }
                 },
@@ -63,17 +67,17 @@ fun DayScreen(
                 NavigationBarItem(
                     selected = true,
                     icon = { Icon(Icons.Filled.CheckBox, contentDescription = "") },
-                    label = { Text("Today") },
+                    label = { Text(stringResource(id = R.string.today)) },
                     onClick = { /*TODO*/ })
                 NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
-                    label = { Text("My Habits") },
+                    label = { Text(stringResource(id = R.string.my_habits)) },
                     onClick = { onEvent(DayScreenEvent.NavigateToHabitsScreen) })
                 NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
-                    label = { Text("Statistics") },
+                    label = { Text(stringResource(id = R.string.statistics)) },
                     onClick = { onEvent(DayScreenEvent.NavigateToStatistics) })
             }
         },
@@ -81,7 +85,7 @@ fun DayScreen(
     ) { paddingValues ->
         Column(modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit){
+            .pointerInput(Unit) {
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
                         change.consume()
@@ -97,7 +101,7 @@ fun DayScreen(
                         }
                     },
                     onDragEnd = {
-                        when (direction){
+                        when (direction) {
                             0 -> {
                                 // right swipe code here
                                 onEvent(DayScreenEvent.MinusOneDay)

@@ -8,9 +8,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.habit.domain.model.HabitCategory
+import com.example.habit.R
 import com.example.habit.presentation.statistics.components.CategoryAmountChart
 import com.example.habit.presentation.statistics.components.CompletionTimeChart
 
@@ -55,22 +56,24 @@ fun StatisticsScreen(
                 NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.CheckBox, contentDescription = "") },
-                    label = { Text("Today") },
+                    label = { Text(stringResource(id = R.string.today)) },
                     onClick = { onEvent(StatisticsScreenEvent.NavigateToDayScreen) })
                 NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
-                    label = { Text("My Habits") },
+                    label = { Text(stringResource(id = R.string.my_habits)) },
                     onClick = { onEvent(StatisticsScreenEvent.NavigateToHabitsScreen) })
                 NavigationBarItem(
                     selected = true,
                     icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
-                    label = { Text("Statistics") },
+                    label = { Text(stringResource(id = R.string.statistics)) },
                     onClick = {  })
             }
         }
     ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).verticalScroll(rememberScrollState())) {
+        Column(modifier = Modifier
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -78,17 +81,20 @@ fun StatisticsScreen(
                 horizontalArrangement = Arrangement.Start
             ) {
                 Column() {
+                    val allCategoriesString = stringResource(id = R.string.all_categories)
                     FilterChip(
                         selected = state.isCategorySelected,
                         onClick = { onEvent(StatisticsScreenEvent.OpenCategoryDropdown) },
-                        label = {Text(state.categoryName)},
-                        trailingIcon = { Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "Dropdown")})
+                        label = {Text(
+                            state.categoryName ?: stringResource(id = R.string.all_categories)
+                        )},
+                        trailingIcon = { Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "")})
                     DropdownMenu(
                         expanded = state.isCategoryDropdownDisplayed,
                         onDismissRequest = { onEvent(StatisticsScreenEvent.DismissCategoryDropdown) }) {
                         DropdownMenuItem(
-                            text = { Text("All") },
-                            onClick = { onEvent(StatisticsScreenEvent.SetCategory(HabitCategory(0,"Category"))) })
+                            text = { Text(allCategoriesString) },
+                            onClick = { onEvent(StatisticsScreenEvent.SetCategory(null)) })
                         for(category in state.categories){
                             DropdownMenuItem(
                                 text = { Text(category.name) },
@@ -101,15 +107,15 @@ fun StatisticsScreen(
                     FilterChip(
                         selected = true,
                         onClick = { onEvent(StatisticsScreenEvent.OpenPeriodDropdown) },
-                        label = {Text(state.datePeriodString)},
-                        trailingIcon = { Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "Dropdown")})
+                        label = {Text("${state.datePeriodString} ${stringResource(id = R.string.days)}")},
+                        trailingIcon = { Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = "")})
                     DropdownMenu(
                         expanded = state.isDatePeriodDropdownDisplayed,
                         onDismissRequest = { onEvent(StatisticsScreenEvent.DismissPeriodDropdown) }) {
-                        DropdownMenuItem(text = { Text("7 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(7)) })
-                        DropdownMenuItem(text = { Text("14 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(14)) })
-                        DropdownMenuItem(text = { Text("30 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(30)) })
-                        DropdownMenuItem(text = { Text("90 days") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(90)) })
+                        DropdownMenuItem(text = { Text("7 ${stringResource(id = R.string.days)}") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(7)) })
+                        DropdownMenuItem(text = { Text("14 ${stringResource(id = R.string.days)}") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(14)) })
+                        DropdownMenuItem(text = { Text("30 ${stringResource(id = R.string.days)}") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(30)) })
+                        DropdownMenuItem(text = { Text("90 ${stringResource(id = R.string.days)}") }, onClick = { onEvent(StatisticsScreenEvent.SetPeriodInDays(90)) })
                     }
                 }
             }
@@ -118,7 +124,9 @@ fun StatisticsScreen(
             )
             for (data in state.amountListDataSet){
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(text = data.name)
                     Text(text = data.amount.toString())
@@ -134,11 +142,14 @@ fun StatisticsScreen(
                     FilterChip(
                         selected = state.isHabitSelected,
                         onClick = { onEvent(StatisticsScreenEvent.OpenHabitDropdown) },
-                        label = { Text(state.selectedHabitName) },
+                        label = { Text(
+                            state.selectedHabitNameResource?.let { stringResource(id = state.selectedHabitNameResource) }
+                                ?: state.selectedHabitName
+                        ) },
                         trailingIcon = {
                             Icon(
                                 imageVector = Icons.Filled.ArrowDropDown,
-                                contentDescription = "Dropdown"
+                                contentDescription = ""
                             )
                         },
                         enabled = state.isHabitChipEnabled)

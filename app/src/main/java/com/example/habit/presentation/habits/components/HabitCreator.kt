@@ -2,15 +2,13 @@ package com.example.habit.presentation.habits.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import com.example.habit.domain.util.DateTimeUtil
+import com.example.habit.R
 import com.example.habit.presentation.core.components.BottomCreator
 import com.example.habit.presentation.core.components.LocalDatePicker
 import com.example.habit.presentation.core.components.LocalTimePicker
@@ -31,7 +29,7 @@ fun HabitCreator(
     modifier: Modifier = Modifier
 ){
     BottomCreator(
-        buttonText = "Create",
+        buttonText = stringResource(id = R.string.create),
         buttonOnClick = { onEvent(HabitsScreenEvent.CreateNewHabit) },
         onCloseEvent = { onEvent(HabitsScreenEvent.CloseNewHabitCreator) },
         isButtonEnabled = isValidHabit,
@@ -53,7 +51,7 @@ fun HabitCreator(
                 .padding(horizontal = 4.dp),
             value = name,
             onValueChange = {onEvent(HabitsScreenEvent.EditNewHabitName(it))},
-            label = {Text("Name")},
+            label = {Text(stringResource(id = R.string.habit_name))},
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
         Spacer(modifier = Modifier.padding(4.dp))
@@ -63,24 +61,8 @@ fun HabitCreator(
                 .padding(horizontal = 4.dp),
             value = category,
             onValueChange = {onEvent(HabitsScreenEvent.EditNewHabitCategory(it))},
-            label = {Text("Category")},
+            label = {Text(stringResource(id = R.string.category))},
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences)
         )
-    }
-}
-
-@Composable
-fun HabitDatePicker(
-    date: LocalDate
-){
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(text = DateTimeUtil.formatDate(date))
-        IconButton(onClick = { /*TODO*/ }) {
-            Icon(imageVector = Icons.Filled.DateRange, contentDescription = "")
-        }
     }
 }

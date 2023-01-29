@@ -11,7 +11,7 @@ sealed class StatisticsScreenEvent {
     object OpenCategoryDropdown : StatisticsScreenEvent()
     object OpenPeriodDropdown : StatisticsScreenEvent()
     data class SetPeriodInDays(val days: Int) : StatisticsScreenEvent()
-    data class SetCategory(val category: HabitCategory) : StatisticsScreenEvent()
+    data class SetCategory(val category: HabitCategory?) : StatisticsScreenEvent()
     object OpenHabitDropdown : StatisticsScreenEvent()
     object DismissHabitDropdown : StatisticsScreenEvent()
     data class SetHabit(val habitName: HabitName) : StatisticsScreenEvent()

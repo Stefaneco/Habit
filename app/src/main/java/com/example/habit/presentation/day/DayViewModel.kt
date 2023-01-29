@@ -68,6 +68,7 @@ class DayViewModel @Inject constructor(
             }
             is DayScreenEvent.MinusOneDay -> {
                 val newDate = _state.value.date.minus(DatePeriod(days = 1))
+                val dateResource = DateTimeUtil.formatFriendlyDate(newDate)
                 viewModelScope.launch {
                     _state.update { it.copy(
                         date = newDate,
@@ -75,13 +76,15 @@ class DayViewModel @Inject constructor(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
-                        dateString = DateTimeUtil.formatFriendlyDate(newDate),
+                        dateString = dateResource.default,
+                        dateStringResource = dateResource.resource,
                         isItemEditorOpen = false
                     ) }
                 }
             }
             is DayScreenEvent.PlusOneDay -> {
                 val newDate = _state.value.date.plus(DatePeriod(days = 1))
+                val dateResource = DateTimeUtil.formatFriendlyDate(newDate)
                 viewModelScope.launch {
                     _state.update { it.copy(
                         date = newDate,
@@ -89,7 +92,8 @@ class DayViewModel @Inject constructor(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
-                        dateString = DateTimeUtil.formatFriendlyDate(newDate),
+                        dateString = dateResource.default,
+                        dateStringResource = dateResource.resource,
                         isItemEditorOpen = false
                     ) }
                 }

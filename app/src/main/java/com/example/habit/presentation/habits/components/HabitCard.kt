@@ -50,7 +50,7 @@ fun HabitCard(
                     IconButton(onClick = { onEvent(HabitsScreenEvent.DeleteHabit(habit.id)) }) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = "",
                             modifier = Modifier.size(size = (24* min(1f,offsetX/maxOffsetX)).dp)
                         )
                     }
