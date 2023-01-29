@@ -12,12 +12,18 @@ interface HabitHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertHabitHistoryItem(habitItem: HabitHistoryItemEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>)
+
     @Insert
     suspend fun insertAllHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>)
 
 
     @Query("SELECT * FROM habitHistory WHERE dateTimeTimestamp BETWEEN :from AND :to")
     suspend fun getHabitHistoryItems(from: Long, to: Long) : List<HabitHistoryItemEntity>
+
+    @Query("SELECT * FROM habitHistory WHERE dateTimeTimestamp > :from AND habitId=:habitId")
+    suspend fun getHabitHistoryItemsByHabitId(from: Long, habitId: Long) : List<HabitHistoryItemEntity>
 
     @Query("SELECT habitHistory.id AS id, " +
             "habitHistory.habitId as habitId, " +

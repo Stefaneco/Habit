@@ -6,6 +6,7 @@ import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.model.dto.HabitName
 import com.example.habit.domain.util.DateTimeUtil
+import kotlinx.datetime.atTime
 
 class HabitRepository(db: AppDatabase) : IHabitRepository {
     private val habitDao = db.habitDao()
@@ -85,5 +86,50 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
 
     override suspend fun updateHabits(habits: List<Habit>) {
         habitDao.insertHabits(habits.map { Habit.toHabitEntity(it) })
+    }
+
+    override suspend fun updateHabit(habit: Habit) {
+        /*
+        if time changed
+            - update all future habitHistoryItems
+            - update nextOccurrence
+        update category
+        update habit
+        */
+
+        //if time changed
+        if(DateTimeUtil.fromEpochMillis(habit.start).time != DateTimeUtil.fromEpochMillis(habit.nextOccurrence).time){
+            //update all future habitHistoryItems
+            val futureHistoryItems = habitHistoryDao.getHabitHistoryItemsByHabitId(
+                from = DateTimeUtil.nowEpochMillis(),
+                habitId = habit.id
+            )
+            val newFutureHistoryItems = futureHistoryItems.map {
+                val newDateTime = DateTimeUtil.fromEpochMillis(it.dateTimeTimestamp).date
+                    .atTime(DateTimeUtil.fromEpochMillis(habit.start).time)
+                it.copy(dateTimeTimestamp = DateTimeUtil.toEpochMillis(newDateTime))
+            }
+            habitHistoryDao.upsertHabitHistoryItems(newFutureHistoryItems)
+
+            //update nextOccurrence
+            val newNextOccurrenceDateTime =
+                DateTimeUtil.fromEpochMillis(habit.nextOccurrence).date
+                    .atTime(DateTimeUtil.fromEpochMillis(habit.start).time)
+            habit.nextOccurrence = DateTimeUtil.toEpochMillis(newNextOccurrenceDateTime)
+        }
+
+        //category update
+        val isCategoryInDb = categoryDao.isCategoryNameInDb(habit.category.name)
+        if(!isCategoryInDb) {
+            val categoryId = categoryDao.insertHabitCategory(HabitCategory.toHabitCategoryEntity(habit.category))
+            habit.category.id = categoryId
+        }
+        else if(habit.category.id == 0L){
+            val category = categoryDao.getHabitCategoryByName(habit.category.name)
+            habit.category.id = category.id
+        }
+
+        //habit update
+        habitDao.upsertHabit(Habit.toHabitEntity(habit))
     }
 }

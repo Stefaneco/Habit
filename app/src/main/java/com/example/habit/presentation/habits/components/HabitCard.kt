@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -25,38 +26,59 @@ fun HabitCard(
     onEvent: (HabitsScreenEvent) -> Unit
 ) {
     var offsetX by remember { mutableStateOf(0f) }
-    val maxOffsetX = 250f
+    val midOffsetX = 300f
+    val maxOffsetX = 500f
     Box(){
+
+        //DELETE AND EDIT CARD
         Card(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.height(70.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.onError,
-                contentColor = MaterialTheme.colorScheme.error
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
         ){
             Row(
                 modifier = Modifier
-                    .fillMaxSize(),
-                    //.padding(horizontal = 16.dp),
+                    .fillMaxSize()
+                    .padding(end = 16.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(modifier = Modifier
                     .fillMaxHeight()
-                    .width(80.dp),
+                    .width(60.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically){
+                    IconButton(onClick = {
+                        offsetX = 0f
+                        onEvent(HabitsScreenEvent.OpenHabitEditor(habit))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "",
+                            modifier = Modifier.size(size = (24* min(1f,offsetX/maxOffsetX)).dp)
+                        )
+                    }
+                }
+                Row(modifier = Modifier
+                    .fillMaxHeight()
+                    .width(60.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically){
                     IconButton(onClick = { onEvent(HabitsScreenEvent.DeleteHabit(habit.id)) }) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "",
-                            modifier = Modifier.size(size = (24* min(1f,offsetX/maxOffsetX)).dp)
+                            modifier = Modifier.size(size = (24* min(1f,offsetX/midOffsetX)).dp)
                         )
                     }
                 }
             }
         }
+
+        //HABIT ITEM CARD
         Card(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier
@@ -69,6 +91,7 @@ fun HabitCard(
                     },
                     onDragStopped = {
                         if (offsetX >= maxOffsetX - 50) offsetX = maxOffsetX
+                        else if (offsetX >= midOffsetX - 50) offsetX = midOffsetX
                         else offsetX = 0f
                     }
                 )
@@ -101,8 +124,5 @@ fun HabitCard(
                 }
             }
         }
-
-
     }
-
 }

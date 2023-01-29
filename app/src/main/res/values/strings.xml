@@ -15,4 +15,5 @@
     <string name="select_habit">Select Habit</string>
     <string name="select_category_first">Select Category first</string>
     <string name="no_data_to_display">No data to display</string>
+    <string name="save">Save</string>
 </resources>

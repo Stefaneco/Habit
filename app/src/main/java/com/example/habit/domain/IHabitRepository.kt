@@ -14,6 +14,7 @@ interface IHabitRepository {
     suspend fun getHabitHistoryItemsByHabitId(fromTimestamp: Long, toTimestamp: Long, habitId: Long) : List<HabitHistoryItem>
     suspend fun insertHabitHistoryItems(habitItems: List<HabitHistoryItem>)
     suspend fun updateHabits(habits: List<Habit>)
+    suspend fun updateHabit(habit: Habit)
     suspend fun upsertHabitHistoryItem(habitHistoryItem: HabitHistoryItem)
     suspend fun deleteHabit(habitId: Long, deletePlanned: Boolean = true, deleteHistory: Boolean = false)
     suspend fun getAllCategories() : List<HabitCategory>

@@ -145,6 +145,54 @@ class HabitsViewModel @Inject constructor(
                     habits = newHabits
                 ) }
             }
+            is HabitsScreenEvent.OpenHabitEditor -> {
+                _state.update { it.copy(
+                    isHabitEditorOpen = true,
+                    editedHabit = event.habit
+                ) }
+            }
+            is HabitsScreenEvent.CloseHabitEditor -> {
+                _state.update { it.copy(
+                    isHabitEditorOpen = false,
+                    editedHabit = null
+                ) }
+            }
+            is HabitsScreenEvent.EditEditedHabitName -> {
+                _state.update { it.copy(
+                    editedHabit = it.editedHabit?.copy(name = event.name),
+                    isValidEditedHabit = isValidHabit(event.name, it.editedHabit?.category?.name ?: "")
+                ) }
+            }
+            is HabitsScreenEvent.EditEditedHabitCategory -> {
+                _state.update { it.copy(
+                    editedHabit = it.editedHabit?.copy(category = HabitCategory(0,event.category)),
+                    isValidEditedHabit = isValidHabit(it.editedHabit?.name ?: "", event.category)
+                ) }
+            }
+            is HabitsScreenEvent.EditEditedHabitTime -> {
+                val currentDateTime = DateTimeUtil.fromEpochMillis(_state.value.editedHabit?.start
+                    ?: throw NullPointerException("Edited Habit is null"))
+                val newDateTime = currentDateTime.date.atTime(event.time)
+                _state.update { it.copy(
+                    editedHabit = it.editedHabit?.copy(
+                        start = DateTimeUtil.toEpochMillis(newDateTime)
+                    )
+                ) }
+            }
+            is HabitsScreenEvent.SaveEditedHabit -> {
+                viewModelScope.launch {
+                    _state.value.editedHabit?.let { habitsRepository.updateHabit(it) }
+                }
+                _state.update { it.copy(
+                    isValidEditedHabit = false,
+                    isHabitEditorOpen = false,
+                    editedHabit = null,
+                    habits = _state.value.habits.map { habit ->
+                        if(habit.id == _state.value.editedHabit?.id) _state.value.editedHabit!!
+                        else habit
+                    }
+                ) }
+            }
             else -> {}
         }
     }
