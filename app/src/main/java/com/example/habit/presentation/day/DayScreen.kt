@@ -1,15 +1,17 @@
 package com.example.habit.presentation.day
 
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.habit.presentation.day.components.HabitHistoryItemCard
 import com.example.habit.presentation.day.components.HabitHistoryItemEditor
@@ -21,6 +23,7 @@ fun DayScreen(
     onEvent: (DayScreenEvent) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var direction by remember { mutableStateOf(-1)}
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -78,8 +81,38 @@ fun DayScreen(
     ) { paddingValues ->
         Column(modifier = Modifier
             .fillMaxSize()
+            .pointerInput(Unit){
+                detectDragGestures(
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        when {
+                            dragAmount.x > 0 -> {
+                                //right
+                                direction = 0
+                            }
+                            dragAmount.x < 0 -> {
+                                // left
+                                direction = 1
+                            }
+                        }
+                    },
+                    onDragEnd = {
+                        when (direction){
+                            0 -> {
+                                // right swipe code here
+                                onEvent(DayScreenEvent.MinusOneDay)
+                            }
+                            1 -> {
+                                // left swipe code here
+                                onEvent(DayScreenEvent.PlusOneDay)
+                            }
+                        }
+                    }
+                )
+            }
             .padding(paddingValues)
-            .alpha(if (state.isItemEditorOpen) 0.7f else 1f)) {
+            .alpha(if (state.isItemEditorOpen) 0.7f else 1f))
+        {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(vertical = 4.dp, horizontal = 4.dp)
