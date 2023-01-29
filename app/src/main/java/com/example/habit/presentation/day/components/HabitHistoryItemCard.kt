@@ -49,7 +49,11 @@ fun HabitHistoryItemCard(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                Text(text = DateTimeUtil.formatTime(habitHistoryItem.dateTimeTimestamp))
+                Text(text = DateTimeUtil.formatTime(
+                    if(habitHistoryItem.isDone)
+                        habitHistoryItem.doneTimestamp!!
+                    else habitHistoryItem.dateTimeTimestamp
+                ))
                 Spacer(modifier = Modifier.padding(4.dp))
                 Icon(imageVector = Icons.Filled.Schedule, contentDescription = "")
             }
