@@ -168,7 +168,8 @@ fun StatisticsScreen(
                 startDate = state.startDate,
                 endDate = state.endDate,
                 perfectCompletionTime = state.perfectCompletionTime,
-                dataSet = state.completionTimeDataSet
+                dataSet = state.completionTimeDataSet,
+                noDataMessage = if(state.isHabitSelected) stringResource(id = R.string.no_data_to_display) else ""
             )
         }
     }

@@ -24,7 +24,8 @@ fun CompletionTimeChart(
     startDate: LocalDate,
     endDate: LocalDate,
     dataSet: List<LocalDateTime> = emptyList(),
-    perfectCompletionTime: LocalTime
+    perfectCompletionTime: LocalTime,
+    noDataMessage : String = ""
 ) {
     //VARIABLES
     var upperValue = dataSet.maxOfOrNull { it.time } ?: LocalTime(10,0)
@@ -52,14 +53,23 @@ fun CompletionTimeChart(
         }
     }
 
-    if (dataSet.isEmpty()) return
-
     Canvas(modifier = Modifier
         .fillMaxWidth()
         .height(300.dp)
         .padding(16.dp)){
 
         drawContext.canvas.nativeCanvas.apply {
+
+            if (dataSet.isEmpty()) {
+                drawText(
+                    noDataMessage,
+                    (size.width - spacing)/2f,
+                    (size.height - spacing)/2f,
+                    textPaint
+                )
+                return@Canvas
+            }
+
             //VARIABLES 2
             val widthChunk = (size.width - spacing) / startDate.daysUntil(endDate)
             val dataGroupedByDate = dataSet.groupBy { it.date }

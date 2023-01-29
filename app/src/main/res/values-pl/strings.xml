@@ -15,4 +15,5 @@
     <string name="days">Dni</string>
     <string name="select_habit">Wybierz Nawyk</string>
     <string name="select_category_first">Najpierw wybierz kategorie</string>
+    <string name="no_data_to_display">Brak danych do wyświetlenia</string>
 </resources>
