@@ -7,6 +7,7 @@ import com.example.habit.domain.model.Habit
 import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
+import com.example.habit.domain.util.rangeTo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,11 +48,13 @@ class HabitsViewModel @Inject constructor(
             is HabitsScreenEvent.CreateNewHabit -> {
                 with(_state.value){
                     if(!isValidHabitName(newHabitName)) return
-                    val startDateTime = DateTimeUtil.now().date.atTime(newHabitTime)
+                    val startDateTime = newHabitDate.atTime(newHabitTime)
                     val newHabit = Habit(
                         name = newHabitName,
                         start = DateTimeUtil.toEpochMillis(startDateTime),
-                        nextOccurrence = DateTimeUtil.toEpochMillis(startDateTime) + DateTimeUtil.DAY_IN_MILLIS * 2,
+                        nextOccurrence = DateTimeUtil.toEpochMillis(
+                            DateTimeUtil.now().date.atTime(newHabitTime)
+                        ) + DateTimeUtil.DAY_IN_MILLIS * 3,
                         category = HabitCategory(0,newHabitCategory),
                         repetition = newHabitRepetition
                     )
@@ -65,22 +68,46 @@ class HabitsViewModel @Inject constructor(
                             habits = newHabitList
                         ) }
 
-                        val newHabitHistoryItems = mutableListOf(
+                        val newHabitHistoryItems = mutableListOf<HabitHistoryItem>(
                             HabitHistoryItem(
                                 habitId = newHabitId,
-                                dateTimeTimestamp = newHabit.start + DateTimeUtil.DAY_IN_MILLIS
+                                dateTimeTimestamp = DateTimeUtil.toEpochMillis(
+                                    DateTimeUtil.now().date.atTime(newHabitTime)
+                                ) + DateTimeUtil.DAY_IN_MILLIS
                             ),
                             HabitHistoryItem(
-                                habitId = newHabitId,
-                                dateTimeTimestamp = newHabit.start + DateTimeUtil.DAY_IN_MILLIS * 2
-                            )
+                                    habitId = newHabitId,
+                            dateTimeTimestamp = DateTimeUtil.toEpochMillis(
+                                DateTimeUtil.now().date.atTime(newHabitTime)
+                            ) + DateTimeUtil.DAY_IN_MILLIS * 2
                         )
-                        if(newHabitTime >= DateTimeUtil.now().time) newHabitHistoryItems.add(
+                        )
+                        for(date in newHabitDate..DateTimeUtil.now().date){
+                            newHabitHistoryItems.add(
+                                HabitHistoryItem(
+                                    habitId = newHabitId,
+                                    dateTimeTimestamp = DateTimeUtil.toEpochMillis(date.atTime(newHabitTime))
+                                )
+                            )
+                        }
+                        HabitHistoryItem(
+                            habitId = newHabitId,
+                            dateTimeTimestamp = DateTimeUtil.toEpochMillis(
+                                DateTimeUtil.now().date.atTime(newHabitTime)
+                            ) + DateTimeUtil.DAY_IN_MILLIS
+                        )
+                        HabitHistoryItem(
+                            habitId = newHabitId,
+                            dateTimeTimestamp = DateTimeUtil.toEpochMillis(
+                                DateTimeUtil.now().date.atTime(newHabitTime)
+                            ) + DateTimeUtil.DAY_IN_MILLIS * 2
+                        )
+                        /*if(newHabitTime >= DateTimeUtil.now().time) newHabitHistoryItems.add(
                             HabitHistoryItem(
                                 habitId = newHabitId,
                                 dateTimeTimestamp = newHabit.start
                             )
-                        )
+                        )*/
                         /*for(i in 1..10) {
                             newHabitHistoryItems.add(
                                 HabitHistoryItem(
@@ -112,6 +139,11 @@ class HabitsViewModel @Inject constructor(
             is HabitsScreenEvent.EditNewHabitTime -> {
                 _state.update { it.copy(
                     newHabitTime = event.time
+                ) }
+            }
+            is HabitsScreenEvent.EditNewHabitDate -> {
+                _state.update { it.copy(
+                    newHabitDate = event.date
                 ) }
             }
             is HabitsScreenEvent.DeleteHabit -> {

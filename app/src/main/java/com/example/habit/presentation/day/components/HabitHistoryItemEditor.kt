@@ -2,7 +2,7 @@ package com.example.habit.presentation.day.components
 
 import androidx.compose.runtime.Composable
 import com.example.habit.presentation.core.components.BottomCreator
-import com.example.habit.presentation.core.components.TimePicker
+import com.example.habit.presentation.core.components.LocalTimePicker
 import com.example.habit.presentation.day.DayScreenEvent
 import kotlinx.datetime.LocalTime
 
@@ -16,6 +16,6 @@ fun HabitHistoryItemEditor(
         buttonText = "Done!",
         buttonOnClick = { onEvent(DayScreenEvent.ChangeSelectedHabitHistoryItemState) },
         onCloseEvent = { onEvent(DayScreenEvent.CloseItemEditor) }) {
-        TimePicker(time = time, onSelectionEvent = { onEvent(DayScreenEvent.EditSelectedItemTime(it))})
+        LocalTimePicker(time = time, onSelectionEvent = { onEvent(DayScreenEvent.EditSelectedItemTime(it))})
     }
 }

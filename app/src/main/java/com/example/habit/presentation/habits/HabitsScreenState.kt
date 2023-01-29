@@ -3,7 +3,7 @@ package com.example.habit.presentation.habits
 import com.example.habit.domain.Repetition
 import com.example.habit.domain.model.Habit
 import com.example.habit.domain.util.DateTimeUtil
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 data class HabitsScreenState(
@@ -14,6 +14,6 @@ data class HabitsScreenState(
     val newHabitName: String = "",
     val newHabitCategory: String = "",
     val newHabitTime: LocalTime = LocalTime(10,0,0),
-    val newHabitDate: LocalDateTime = DateTimeUtil.now(),
+    val newHabitDate: LocalDate = DateTimeUtil.now().date,
     val newHabitRepetition : String = Repetition.DAILY
 )

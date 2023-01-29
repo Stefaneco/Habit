@@ -10,9 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.habit.domain.util.DateTimeUtil
 import com.example.habit.presentation.core.components.BottomCreator
-import com.example.habit.presentation.core.components.TimePicker
+import com.example.habit.presentation.core.components.LocalDatePicker
+import com.example.habit.presentation.core.components.LocalTimePicker
 import com.example.habit.presentation.habits.HabitsScreenEvent
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,7 +21,7 @@ import kotlinx.datetime.LocalTime
 fun HabitCreator(
     name: String,
     time: LocalTime,
-    date: LocalDateTime,
+    date: LocalDate,
     repetition: String,
     category: String,
     isValidHabit: Boolean,
@@ -35,7 +36,10 @@ fun HabitCreator(
         modifier = modifier
     )
     {
-        TimePicker(
+
+        LocalDatePicker(date = date, onSelectionEvent = {onEvent(HabitsScreenEvent.EditNewHabitDate(it))})
+        Spacer(modifier = Modifier.padding(4.dp))
+        LocalTimePicker(
             time = time,
             onSelectionEvent = { onEvent(HabitsScreenEvent.EditNewHabitTime(it)) }
         )
@@ -60,7 +64,7 @@ fun HabitCreator(
 
 @Composable
 fun HabitDatePicker(
-    date: LocalDateTime
+    date: LocalDate
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,

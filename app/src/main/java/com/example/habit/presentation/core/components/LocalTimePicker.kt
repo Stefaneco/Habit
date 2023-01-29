@@ -24,7 +24,7 @@ import kotlinx.datetime.toJavaLocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePicker(
+fun LocalTimePicker(
     time: LocalTime,
     onSelectionEvent: (LocalTime) -> Unit
 ){

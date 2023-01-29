@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
             .getInstance(applicationContext)
             .enqueueUniquePeriodicWork(
                 "dailyWorker",
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.REPLACE,
                 dailyRequest
             )
         setContent {
