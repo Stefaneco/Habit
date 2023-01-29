@@ -54,6 +54,11 @@ fun StatisticsScreen(
         bottomBar = {
             NavigationBar() {
                 NavigationBarItem(
+                    selected = true,
+                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
+                    label = { Text(stringResource(id = R.string.statistics)) },
+                    onClick = {  })
+                NavigationBarItem(
                     selected = false,
                     icon = { Icon(Icons.Filled.CheckBox, contentDescription = "") },
                     label = { Text(stringResource(id = R.string.today)) },
@@ -63,11 +68,6 @@ fun StatisticsScreen(
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
                     label = { Text(stringResource(id = R.string.my_habits)) },
                     onClick = { onEvent(StatisticsScreenEvent.NavigateToHabitsScreen) })
-                NavigationBarItem(
-                    selected = true,
-                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
-                    label = { Text(stringResource(id = R.string.statistics)) },
-                    onClick = {  })
             }
         }
     ) { paddingValues ->

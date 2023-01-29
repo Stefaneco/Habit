@@ -29,6 +29,11 @@ fun HabitsScreen(
             NavigationBar() {
                 NavigationBarItem(
                     selected = false,
+                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
+                    label = { Text(stringResource(id = R.string.statistics)) },
+                    onClick = { onEvent(HabitsScreenEvent.NavigateToStatistics) })
+                NavigationBarItem(
+                    selected = false,
                     icon = { Icon(Icons.Filled.CheckBox, contentDescription = "") },
                     label = { Text(stringResource(id = R.string.today)) },
                     onClick = { onEvent(HabitsScreenEvent.NavigateToDayScreen) })
@@ -37,11 +42,7 @@ fun HabitsScreen(
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
                     label = { Text(stringResource(id = R.string.my_habits)) },
                     onClick = { /*TODO*/ })
-                NavigationBarItem(
-                    selected = false,
-                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
-                    label = { Text(stringResource(id = R.string.statistics)) },
-                    onClick = { onEvent(HabitsScreenEvent.NavigateToStatistics) })
+
             }
         }
     ){ paddingValues ->

@@ -65,6 +65,11 @@ fun DayScreen(
         bottomBar = {
             NavigationBar() {
                 NavigationBarItem(
+                    selected = false,
+                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
+                    label = { Text(stringResource(id = R.string.statistics)) },
+                    onClick = { onEvent(DayScreenEvent.NavigateToStatistics) })
+                NavigationBarItem(
                     selected = true,
                     icon = { Icon(Icons.Filled.CheckBox, contentDescription = "") },
                     label = { Text(stringResource(id = R.string.today)) },
@@ -74,11 +79,6 @@ fun DayScreen(
                     icon = { Icon(Icons.Filled.AllInbox, contentDescription = "") },
                     label = { Text(stringResource(id = R.string.my_habits)) },
                     onClick = { onEvent(DayScreenEvent.NavigateToHabitsScreen) })
-                NavigationBarItem(
-                    selected = false,
-                    icon = { Icon(Icons.Filled.AutoGraph, contentDescription = "") },
-                    label = { Text(stringResource(id = R.string.statistics)) },
-                    onClick = { onEvent(DayScreenEvent.NavigateToStatistics) })
             }
         },
 
