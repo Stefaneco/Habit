@@ -10,5 +10,6 @@ data class HabitEntity(
     val start: Long,
     val nextOccurrence: Long,
     val repetition: String,
-    val categoryId: Long
+    val categoryId: Long,
+    val isDeleted: Boolean = false
 )

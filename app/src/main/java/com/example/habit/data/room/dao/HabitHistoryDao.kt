@@ -57,9 +57,21 @@ interface HabitHistoryDao {
             "AND habitHistory.dateTimeTimestamp BETWEEN :from AND :to")
     suspend fun getHabitHistoryItemDtosByHabitId(from: Long, to: Long, habitId: Long) : List<HabitHistoryItemDto>
 
+    @Query("SELECT habitHistory.id AS id, " +
+            "habitHistory.habitId as habitId, " +
+            "habitHistory.isDone AS isDone," +
+            "habitHistory.dateTimeTimestamp AS dateTimeTimestamp," +
+            "habitHistory.doneTimestamp AS doneTimestamp," +
+            "habits.name AS habitName " +
+            "FROM habitHistory " +
+            "INNER JOIN habits ON habits.id = habitHistory.habitId " +
+            "WHERE habitHistory.habitId = habits.Id " +
+            "AND habitHistory.habitId = :habitId ")
+    suspend fun getHabitHistoryItemDtosByHabitId(habitId: Long) : List<HabitHistoryItemDto>
+
     @Query("DELETE FROM habitHistory WHERE habitId=:habitId")
     suspend fun deleteHistoryItemsByHabitId(habitId: Long)
 
-    @Query("DELETE FROM habitHistory WHERE habitId=:habitId AND dateTimeTimestamp>:deleteAfterTimestamp")
+    @Query("DELETE FROM habitHistory WHERE ((habitId=:habitId) AND (dateTimeTimestamp > :deleteAfterTimestamp))")
     suspend fun deletePlannedHistoryItemsByHabitId(habitId: Long, deleteAfterTimestamp: Long)
 }

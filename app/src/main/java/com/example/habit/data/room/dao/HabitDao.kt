@@ -11,6 +11,9 @@ interface HabitDao {
     @Query("Select * FROM habits")
     suspend fun getAllHabits() : List<HabitEntity>
 
+    @Query("Select * FROM habits WHERE id=:id")
+    suspend fun getHabit(id: Long) : HabitEntity
+
     @Query("Select " +
             "habits.id," +
             "habits.name," +
@@ -18,10 +21,11 @@ interface HabitDao {
             "habits.nextOccurrence," +
             "habits.repetition," +
             "habits.categoryId," +
+            "habits.isDeleted," +
             "categories.name AS categoryName " +
             "FROM habits INNER JOIN categories ON habits.categoryId = categories.id " +
-            "WHERE habits.id=:id")
-    suspend fun getHabitDto(id: Long) : HabitDto
+            "WHERE habits.id=:id AND habits.isDeleted=:isDeleted")
+    suspend fun getHabitDto(id: Long, isDeleted: Boolean) : HabitDto
 
     @Query("Select id, name FROM habits WHERE categoryId=:categoryId")
     suspend fun getHabitNamesByCategoryId(categoryId: Long): List<HabitNameDto>
@@ -33,15 +37,20 @@ interface HabitDao {
             "habits.nextOccurrence," +
             "habits.repetition," +
             "habits.categoryId," +
+            "habits.isDeleted," +
             "categories.name AS categoryName " +
-            "FROM habits INNER JOIN categories ON habits.categoryId = categories.id")
-    suspend fun getAllHabitsDto(): List<HabitDto>
+            "FROM habits INNER JOIN categories ON habits.categoryId = categories.id " +
+            "WHERE habits.isDeleted=:isDeleted")
+    suspend fun getAllHabitsDto(isDeleted: Boolean): List<HabitDto>
 
     @Insert
     suspend fun insertHabit(habitEntity: HabitEntity) : Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHabits(habitEntity: List<HabitEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertHabit(habitEntity: HabitEntity) : Long
 
     @Query("DELETE FROM habits WHERE id=:id")
     suspend fun deleteHabitById(id: Long)

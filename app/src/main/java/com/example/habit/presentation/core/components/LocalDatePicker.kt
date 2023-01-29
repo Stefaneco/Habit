@@ -30,7 +30,7 @@ fun LocalDatePicker(
     ) {
         InputChip(
             selected = false,
-            onClick = {  },
+            onClick = { calendarState.show() },
             label = {Text(text = DateTimeUtil.formatShortDate(date))},
             trailingIcon = {Icon(imageVector = Icons.Filled.DateRange, contentDescription = "")}
         )

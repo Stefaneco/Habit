@@ -7,6 +7,7 @@ data class HabitDto(
     val nextOccurrence: Long,
     val repetition: String,
     val categoryId: Long,
-    val categoryName: String
+    val categoryName: String,
+    val isDeleted: Boolean
 ) {
 }

@@ -13,7 +13,7 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
     private val categoryDao = db.habitCategoryDao()
 
     override suspend fun getAllHabits() : List<Habit> {
-        return habitDao.getAllHabitsDto().map { Habit.fromHabitDto(it) }
+        return habitDao.getAllHabitsDto(false).map { Habit.fromHabitDto(it) }
     }
 
     override suspend fun insertHabit(habit: Habit) : Long{
@@ -38,9 +38,15 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
         deletePlanned: Boolean,
         deleteHistory: Boolean
     ) {
-        habitDao.deleteHabitById(habitId)
-        if(deleteHistory) habitHistoryDao.deleteHistoryItemsByHabitId(habitId)
-        else if(deletePlanned) habitHistoryDao.deletePlannedHistoryItemsByHabitId(habitId, DateTimeUtil.nowEpochMillis())
+        val habit = habitDao.getHabit(habitId)
+        habitDao.upsertHabit(habit.copy(isDeleted = true))
+        if(deleteHistory){
+            habitHistoryDao.deleteHistoryItemsByHabitId(habitId)
+        }
+        else if(deletePlanned){
+            habitHistoryDao.deletePlannedHistoryItemsByHabitId(habitId, DateTimeUtil.nowEpochMillis())
+        }
+        //habitDao.deleteHabitById(habitId)
     }
 
     override suspend fun getAllCategories(): List<HabitCategory> {
@@ -52,7 +58,7 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
     }
 
     override suspend fun getHabit(habitId: Long): Habit {
-        return Habit.fromHabitDto(habitDao.getHabitDto(habitId))
+        return Habit.fromHabitDto(habitDao.getHabitDto(habitId, false))
     }
 
     override suspend fun getHabitHistoryItems(

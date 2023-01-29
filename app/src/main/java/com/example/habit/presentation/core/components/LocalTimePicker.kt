@@ -31,7 +31,7 @@ fun LocalTimePicker(
     ) {
         InputChip(
             selected = false,
-            onClick = {  },
+            onClick = { clockState.show() },
             label = {Text(text = DateTimeUtil.formatTime(time))},
             trailingIcon = {Icon(imageVector = Icons.Filled.Schedule, contentDescription = "")}
         )

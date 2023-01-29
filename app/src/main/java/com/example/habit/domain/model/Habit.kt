@@ -9,7 +9,8 @@ data class Habit(
     val start: Long,
     var nextOccurrence: Long,
     val repetition: String,
-    val category: HabitCategory
+    val category: HabitCategory,
+    val isDeleted: Boolean = false
 ) {
     companion object {
         /*fun fromHabitEntity(habitEntity: HabitEntity): Habit {
@@ -29,7 +30,8 @@ data class Habit(
                 start = habitDto.start,
                 nextOccurrence = habitDto.nextOccurrence,
                 repetition = habitDto.repetition,
-                category = HabitCategory(habitDto.categoryId, habitDto.categoryName)
+                category = HabitCategory(habitDto.categoryId, habitDto.categoryName),
+                isDeleted = habitDto.isDeleted
             )
         }
 
