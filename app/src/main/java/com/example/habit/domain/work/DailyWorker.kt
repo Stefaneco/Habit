@@ -28,23 +28,21 @@ class DailyWorker @AssistedInject constructor(
 
         val habits = habitRepository.getAllHabits()
         val minNextOccurrenceDateTime = DateTimeUtil.nowPlus(days = 2)
-        val minNextOccurrenceTimestamp = DateTimeUtil.toEpochMillis(minNextOccurrenceDateTime)
+        val minNextOccurrenceTimestamp = DateTimeUtil.dayEndEpochMillis(minNextOccurrenceDateTime.date)
         val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
         for(habit in habits){
             if (minNextOccurrenceTimestamp >= habit.nextOccurrence){
                 val newHabitHistoryItem = HabitHistoryItem(
                     habitId = habit.id,
                     isDone = false,
-                    dateTimeTimestamp = habit.nextOccurrence + DateTimeUtil.DAY_IN_MILLIS
+                    dateTimeTimestamp = habit.nextOccurrence
                 )
+                habit.nextOccurrence += DateTimeUtil.DAY_IN_MILLIS
                 newHabitHistoryItems.add(newHabitHistoryItem)
             }
-            habit.nextOccurrence += DateTimeUtil.DAY_IN_MILLIS
         }
         habitRepository.insertHabitHistoryItems(newHabitHistoryItems)
         habitRepository.updateHabits(habits)
-
-
 
         Log.e("DailyWorker", "Worked!")
         return Result.success()
