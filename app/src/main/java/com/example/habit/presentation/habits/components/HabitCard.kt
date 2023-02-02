@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.habit.domain.model.Habit
@@ -109,8 +110,12 @@ fun HabitCard(
                         .padding(4.dp)
                         .fillMaxWidth(0.7f)
                 ) {
-                    Text(text = habit.name, style = MaterialTheme.typography.headlineSmall)
-                    Text(text = habit.category.name + " " + habit.category.id.toString(), style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = habit.name,
+                        style = MaterialTheme.typography.headlineSmall,
+                        overflow =TextOverflow.Ellipsis,
+                        maxLines =1)
+                    Text(text = habit.category.name, style = MaterialTheme.typography.bodySmall)
                 }
                 Row(
                     modifier = Modifier

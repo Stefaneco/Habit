@@ -1,14 +1,20 @@
 package com.example.habit.domain
 
+import android.util.Log
 import com.example.habit.data.room.AppDatabase
 import com.example.habit.domain.model.Habit
 import com.example.habit.domain.model.HabitCategory
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.model.dto.HabitName
+import com.example.habit.domain.notification.alarm.IAlarmScheduler
+import com.example.habit.domain.notification.model.HabitReminderInfo
 import com.example.habit.domain.util.DateTimeUtil
 import kotlinx.datetime.atTime
 
-class HabitRepository(db: AppDatabase) : IHabitRepository {
+class HabitRepository(
+    db: AppDatabase,
+    private val alarmScheduler: IAlarmScheduler
+) : IHabitRepository {
     private val habitDao = db.habitDao()
     private val habitHistoryDao = db.habitHistoryDao()
     private val categoryDao = db.habitCategoryDao()
@@ -31,6 +37,7 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
     }
 
     override suspend fun upsertHabitHistoryItem(habitHistoryItem: HabitHistoryItem){
+        updateHabitHistoryItemNotification(habitHistoryItem)
         return habitHistoryDao.upsertHabitHistoryItem(HabitHistoryItem.toHabitHistoryItemEntity(habitHistoryItem))
     }
 
@@ -47,7 +54,6 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
         else if(deletePlanned){
             habitHistoryDao.deletePlannedHistoryItemsByHabitId(habitId, DateTimeUtil.nowEpochMillis())
         }
-        //habitDao.deleteHabitById(habitId)
     }
 
     override suspend fun getAllCategories(): List<HabitCategory> {
@@ -81,7 +87,14 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
     }
 
     override suspend fun insertHabitHistoryItems(habitItems: List<HabitHistoryItem>) {
-        habitHistoryDao.insertAllHabitHistoryItems(habitItems.map { HabitHistoryItem.toHabitHistoryItemEntity(it) })
+        val ids = habitHistoryDao.insertAllHabitHistoryItems(habitItems.map { HabitHistoryItem.toHabitHistoryItemEntity(it) })
+        for(i in ids.indices){
+            //println(i)
+            updateHabitHistoryItemNotification(habitItems[i].copy(id = ids[i]))
+        }
+/*        for(item in habitItems){
+            updateHabitHistoryItemNotification(item)
+        }*/
     }
 
     override suspend fun updateHabits(habits: List<Habit>) {
@@ -131,5 +144,23 @@ class HabitRepository(db: AppDatabase) : IHabitRepository {
 
         //habit update
         habitDao.upsertHabit(Habit.toHabitEntity(habit))
+    }
+
+    private fun updateHabitHistoryItemNotification(habitHistoryItem: HabitHistoryItem){
+        if(!habitHistoryItem.isDone && habitHistoryItem.dateTimeTimestamp > DateTimeUtil.nowEpochMillis()){
+            Log.e("HabitRepo", "Scheduling ${habitHistoryItem.habitName} notification at " +
+                    "${DateTimeUtil.fromEpochMillis(habitHistoryItem.dateTimeTimestamp)}")
+            alarmScheduler.schedule(
+                HabitReminderInfo(
+                    id = habitHistoryItem.id.toInt(),
+                    habitName = habitHistoryItem.habitName,
+                    time = habitHistoryItem.dateTimeTimestamp
+                )
+            )
+        }
+        else{
+            Log.e("HabitRepo", "Canceling ${habitHistoryItem.habitName} notification")
+            alarmScheduler.cancel(habitHistoryItem.id.toInt())
+        }
     }
 }

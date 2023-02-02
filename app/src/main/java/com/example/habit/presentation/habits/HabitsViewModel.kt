@@ -28,7 +28,8 @@ class HabitsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(
                 isLoading = false,
-                habits = habitsRepository.getAllHabits().sortedBy { DateTimeUtil.fromEpochMillis(it.start).time }
+                habits = habitsRepository.getAllHabits().sortedBy {
+                    habit -> DateTimeUtil.fromEpochMillis(habit.start).time }
             ) }
         }
     }
@@ -50,11 +51,11 @@ class HabitsViewModel @Inject constructor(
                     if(!isValidHabit(newHabitName, newHabitCategory)) return
                     val startDateTime = newHabitDate.atTime(newHabitTime)
                     val newHabit = Habit(
-                        name = newHabitName,
+                        name = newHabitName.trim(),
                         start = DateTimeUtil.toEpochMillis(startDateTime),
                         nextOccurrence = DateTimeUtil.toEpochMillis(
                             DateTimeUtil.now().date.atTime(newHabitTime)
-                        ) + DateTimeUtil.DAY_IN_MILLIS * 3,
+                        ) + DateTimeUtil.DAY_IN_MILLIS * 2,
                         category = HabitCategory(0,newHabitCategory),
                         repetition = newHabitRepetition
                     )
@@ -70,40 +71,26 @@ class HabitsViewModel @Inject constructor(
                             habits = newHabitList
                         ) }
 
-                        val newHabitHistoryItems = mutableListOf<HabitHistoryItem>(
-                            HabitHistoryItem(
-                                habitId = newHabitId,
-                                dateTimeTimestamp = DateTimeUtil.toEpochMillis(
-                                    DateTimeUtil.now().date.atTime(newHabitTime)
-                                ) + DateTimeUtil.DAY_IN_MILLIS
-                            ),
-                            HabitHistoryItem(
+                        val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
+                        if(newHabitDate <= DateTimeUtil.now().date){
+                            newHabitHistoryItems.add(
+                                HabitHistoryItem(
                                     habitId = newHabitId,
-                            dateTimeTimestamp = DateTimeUtil.toEpochMillis(
-                                DateTimeUtil.now().date.atTime(newHabitTime)
-                            ) + DateTimeUtil.DAY_IN_MILLIS * 2
-                        )
-                        )
+                                    habitName = newHabitName,
+                                    dateTimeTimestamp = DateTimeUtil.toEpochMillis(
+                                        DateTimeUtil.now().date.atTime(newHabitTime))
+                                            + DateTimeUtil.DAY_IN_MILLIS)
+                            )
+                        }
                         for(date in newHabitDate..DateTimeUtil.now().date){
                             newHabitHistoryItems.add(
                                 HabitHistoryItem(
                                     habitId = newHabitId,
+                                    habitName = newHabitName,
                                     dateTimeTimestamp = DateTimeUtil.toEpochMillis(date.atTime(newHabitTime))
                                 )
                             )
                         }
-                        HabitHistoryItem(
-                            habitId = newHabitId,
-                            dateTimeTimestamp = DateTimeUtil.toEpochMillis(
-                                DateTimeUtil.now().date.atTime(newHabitTime)
-                            ) + DateTimeUtil.DAY_IN_MILLIS
-                        )
-                        HabitHistoryItem(
-                            habitId = newHabitId,
-                            dateTimeTimestamp = DateTimeUtil.toEpochMillis(
-                                DateTimeUtil.now().date.atTime(newHabitTime)
-                            ) + DateTimeUtil.DAY_IN_MILLIS * 2
-                        )
                         habitsRepository.insertHabitHistoryItems(newHabitHistoryItems)
                     }
                 }

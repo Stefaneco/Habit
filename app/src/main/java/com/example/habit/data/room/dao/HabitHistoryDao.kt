@@ -16,7 +16,7 @@ interface HabitHistoryDao {
     suspend fun upsertHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>)
 
     @Insert
-    suspend fun insertAllHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>)
+    suspend fun insertAllHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>) : List<Long>
 
 
     @Query("SELECT * FROM habitHistory WHERE dateTimeTimestamp BETWEEN :from AND :to")

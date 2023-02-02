@@ -162,7 +162,7 @@ class StatisticsViewModel @Inject constructor(
             selectedHabitName = "",
             selectedHabitNameResource = selectedHabitNameResource,
             isHabitSelected = false,
-            isHabitChipEnabled = _state.value.categoryId != 0L
+            isHabitChipEnabled = _state.value.categoryId != null
         ) }
     }
 

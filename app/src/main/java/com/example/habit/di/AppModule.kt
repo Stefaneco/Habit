@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.habit.data.room.AppDatabase
 import com.example.habit.domain.HabitRepository
 import com.example.habit.domain.IHabitRepository
+import com.example.habit.domain.notification.alarm.AndroidAlarmScheduler
+import com.example.habit.domain.notification.alarm.IAlarmScheduler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +29,13 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideHabitRepository(db: AppDatabase) : IHabitRepository {
-        return HabitRepository(db)
+    fun provideHabitRepository(db: AppDatabase, alarmScheduler: IAlarmScheduler) : IHabitRepository {
+        return HabitRepository(db, alarmScheduler)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAlarmScheduler(@ApplicationContext appContext: Context) : IAlarmScheduler {
+        return AndroidAlarmScheduler(appContext)
     }
 }

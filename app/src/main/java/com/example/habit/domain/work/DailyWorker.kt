@@ -22,12 +22,12 @@ class DailyWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         //Get all habits
-        //if nextOccurrence <= currentDateTime + 2 days
+        //if nextOccurrence <= currentDateTime + 1 days
         //nextOccurrence += 1 day
         //Create new habitHistoryItem
 
         val habits = habitRepository.getAllHabits()
-        val minNextOccurrenceDateTime = DateTimeUtil.nowPlus(days = 2)
+        val minNextOccurrenceDateTime = DateTimeUtil.nowPlus(days = 1)
         val minNextOccurrenceTimestamp = DateTimeUtil.dayEndEpochMillis(minNextOccurrenceDateTime.date)
         val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
         for(habit in habits){
