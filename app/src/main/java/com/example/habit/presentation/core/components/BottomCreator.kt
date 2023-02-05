@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
@@ -20,10 +21,12 @@ fun BottomCreator(
     onCloseEvent: () -> Unit,
     modifier: Modifier = Modifier,
     isButtonEnabled : Boolean = true,
-    closeOffset: Int = 250,
+    closeOffset: Int = 100,
     content: @Composable () -> Unit,
 ) {
+    val density = LocalDensity.current
     var offsetY by remember { mutableStateOf(0f) }
+    val densityDependantCloseOffset = closeOffset * density.density
 
     Column(
         modifier = Modifier
@@ -34,7 +37,7 @@ fun BottomCreator(
                     if (offsetY + delta > 0) offsetY += delta
                 },
                 onDragStopped = {
-                    if (offsetY > closeOffset) onCloseEvent()
+                    if (offsetY > densityDependantCloseOffset) onCloseEvent()
                     else offsetY = 0f
                 }
             )

@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -27,8 +28,9 @@ fun HabitCard(
     onEvent: (HabitsScreenEvent) -> Unit
 ) {
     var offsetX by remember { mutableStateOf(0f) }
-    val midOffsetX = 300f
-    val maxOffsetX = 500f
+    val density = LocalDensity.current
+    val midOffsetX = 100f * density.density
+    val maxOffsetX = 150f * density.density
     Box(){
 
         //DELETE AND EDIT CARD
@@ -83,17 +85,16 @@ fun HabitCard(
         Card(
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier
-                .offset { -IntOffset(offsetX.roundToInt(), 0) }
+                .offset { -IntOffset((offsetX).roundToInt(), 0) }
                 .draggable(
                     orientation = Orientation.Horizontal,
                     state = rememberDraggableState { delta ->
-                        println(offsetX)
                         if (offsetX - delta > 0) offsetX -= delta
                     },
                     onDragStopped = {
-                        if (offsetX >= maxOffsetX - 50) offsetX = maxOffsetX
-                        else if (offsetX >= midOffsetX - 50) offsetX = midOffsetX
-                        else offsetX = 0f
+                        offsetX = if (offsetX >= maxOffsetX -50f) maxOffsetX
+                        else if (offsetX >= midOffsetX - 50f) midOffsetX
+                        else 0f
                     }
                 )
                 .height(70.dp)
