@@ -3,8 +3,10 @@ package com.example.habit.presentation.statistics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habit.R
-import com.example.habit.domain.IHabitRepository
 import com.example.habit.domain.model.HabitHistoryItem
+import com.example.habit.domain.repositories.ICategoryRepository
+import com.example.habit.domain.repositories.IHabitHistoryRepository
+import com.example.habit.domain.repositories.IHabitRepository
 import com.example.habit.domain.util.DateTimeUtil
 import com.example.habit.domain.util.rangeTo
 import com.example.habit.presentation.statistics.model.NameAndAmountInfo
@@ -20,7 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
-    private val habitRepository: IHabitRepository
+    private val habitRepository: IHabitRepository,
+    private val categoryRepository: ICategoryRepository,
+    private val habitHistoryRepository: IHabitHistoryRepository
 ): ViewModel() {
     private val _state = MutableStateFlow(StatisticsScreenState())
     val state = _state.asStateFlow()
@@ -30,7 +34,7 @@ class StatisticsViewModel @Inject constructor(
             updateDataSets()
             updateHabitNames()
             _state.update { it.copy(
-                categories = habitRepository.getAllCategories()
+                categories = categoryRepository.getAllCategories()
             ) }
         }
     }
@@ -116,12 +120,12 @@ class StatisticsViewModel @Inject constructor(
     private suspend fun updateDataSets(){
         val habitItems =
             if(_state.value.categoryId == null)
-                habitRepository.getHabitHistoryItems(
+                habitHistoryRepository.getHabitHistoryItems(
                 fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
                 toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate)
             )
             else
-                habitRepository.getHabitHistoryItemsByCategoryId(
+                habitHistoryRepository.getHabitHistoryItemsByCategoryId(
                 fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
                 toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate), categoryId = _state.value.categoryId!!
             )
@@ -167,7 +171,7 @@ class StatisticsViewModel @Inject constructor(
     }
 
     private suspend fun updateHabitTimeDataSet(){
-        val habitItems = habitRepository.getHabitHistoryItemsByHabitId(
+        val habitItems = habitHistoryRepository.getHabitHistoryItemsByHabitId(
             fromTimestamp = DateTimeUtil.dayStartEpochMillis(_state.value.startDate),
             toTimestamp = DateTimeUtil.dayEndEpochMillis(_state.value.endDate),
             habitId = _state.value.selectedHabitId

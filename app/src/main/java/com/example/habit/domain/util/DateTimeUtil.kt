@@ -8,6 +8,7 @@ import kotlinx.datetime.*
 object DateTimeUtil {
 
     const val DAY_IN_MILLIS = 86400000
+    const val HOUR_IN_MILLIS = 3600000
 
     fun dayStartEpochMillis() : Long {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())

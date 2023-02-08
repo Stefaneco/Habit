@@ -2,23 +2,26 @@ package com.example.habit.presentation.habits
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.habit.domain.IHabitRepository
+import com.example.habit.domain.repositories.IHabitRepository
+import com.example.habit.domain.interactors.CreateHabit
+import com.example.habit.domain.interactors.UpdateHabit
 import com.example.habit.domain.model.Habit
 import com.example.habit.domain.model.HabitCategory
-import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.util.DateTimeUtil
-import com.example.habit.domain.util.rangeTo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.atTime
+import java.lang.Long.max
 import javax.inject.Inject
 
 @HiltViewModel
 class HabitsViewModel @Inject constructor(
-    private val habitsRepository: IHabitRepository
+    private val habitRepository: IHabitRepository,
+    private val createHabit: CreateHabit,
+    private val updateHabit: UpdateHabit
 ): ViewModel() {
 
     private val _state = MutableStateFlow(HabitsScreenState())
@@ -28,7 +31,7 @@ class HabitsViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(
                 isLoading = false,
-                habits = habitsRepository.getAllHabits().sortedBy {
+                habits = habitRepository.getAllHabits().sortedBy {
                     habit -> DateTimeUtil.fromEpochMillis(habit.start).time }
             ) }
         }
@@ -53,14 +56,16 @@ class HabitsViewModel @Inject constructor(
                     val newHabit = Habit(
                         name = newHabitName.trim(),
                         start = DateTimeUtil.toEpochMillis(startDateTime),
-                        nextOccurrence = DateTimeUtil.toEpochMillis(
+                        nextOccurrence =
+                        max(DateTimeUtil.toEpochMillis(
                             DateTimeUtil.now().date.atTime(newHabitTime)
                         ) + DateTimeUtil.DAY_IN_MILLIS * 2,
+                            DateTimeUtil.toEpochMillis(startDateTime)),
                         category = HabitCategory(0,newHabitCategory),
                         repetition = newHabitRepetition
                     )
                     viewModelScope.launch {
-                        val newHabitId = habitsRepository.insertHabit(newHabit)
+                        val newHabitId = createHabit(newHabit)
                         val newHabitList = (habits + listOf(newHabit.copy(id = newHabitId)))
                             .sortedBy { DateTimeUtil.fromEpochMillis(it.start).time }
 
@@ -70,28 +75,6 @@ class HabitsViewModel @Inject constructor(
                             isValidNewHabit = false,
                             habits = newHabitList
                         ) }
-
-                        val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
-                        if(newHabitDate <= DateTimeUtil.now().date){
-                            newHabitHistoryItems.add(
-                                HabitHistoryItem(
-                                    habitId = newHabitId,
-                                    habitName = newHabitName,
-                                    dateTimeTimestamp = DateTimeUtil.toEpochMillis(
-                                        DateTimeUtil.now().date.atTime(newHabitTime))
-                                            + DateTimeUtil.DAY_IN_MILLIS)
-                            )
-                        }
-                        for(date in newHabitDate..DateTimeUtil.now().date){
-                            newHabitHistoryItems.add(
-                                HabitHistoryItem(
-                                    habitId = newHabitId,
-                                    habitName = newHabitName,
-                                    dateTimeTimestamp = DateTimeUtil.toEpochMillis(date.atTime(newHabitTime))
-                                )
-                            )
-                        }
-                        habitsRepository.insertHabitHistoryItems(newHabitHistoryItems)
                     }
                 }
             }
@@ -124,7 +107,7 @@ class HabitsViewModel @Inject constructor(
             }
             is HabitsScreenEvent.DeleteHabit -> {
                 viewModelScope.launch {
-                    habitsRepository.deleteHabit(event.habitId)
+                    habitRepository.deleteHabit(event.habitId)
                 }
                 val newHabits = _state.value.habits.toMutableList()
                 newHabits.removeIf { it.id == event.habitId }
@@ -168,7 +151,7 @@ class HabitsViewModel @Inject constructor(
             }
             is HabitsScreenEvent.SaveEditedHabit -> {
                 viewModelScope.launch {
-                    _state.value.editedHabit?.let { habitsRepository.updateHabit(it) }
+                    _state.value.editedHabit?.let { updateHabit(it) }
                 }
                 _state.update { it.copy(
                     isValidEditedHabit = false,

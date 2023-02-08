@@ -10,20 +10,27 @@ import com.example.habit.data.room.entities.HabitHistoryItemEntity
 @Dao
 interface HabitHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertHabitHistoryItem(habitItem: HabitHistoryItemEntity)
+    suspend fun upsertHabitHistoryItem(habitItem: HabitHistoryItemEntity) : Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>)
-
-    @Insert
-    suspend fun insertAllHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>) : List<Long>
+    suspend fun upsertAllHabitHistoryItems(habitItems: List<HabitHistoryItemEntity>) : List<Long>
 
 
     @Query("SELECT * FROM habitHistory WHERE dateTimeTimestamp BETWEEN :from AND :to")
     suspend fun getHabitHistoryItems(from: Long, to: Long) : List<HabitHistoryItemEntity>
 
-    @Query("SELECT * FROM habitHistory WHERE dateTimeTimestamp > :from AND habitId=:habitId")
-    suspend fun getHabitHistoryItemsByHabitId(from: Long, habitId: Long) : List<HabitHistoryItemEntity>
+    @Query("SELECT habitHistory.id AS id, " +
+            "habitHistory.habitId as habitId, " +
+            "habitHistory.isDone AS isDone," +
+            "habitHistory.dateTimeTimestamp AS dateTimeTimestamp," +
+            "habitHistory.doneTimestamp AS doneTimestamp," +
+            "habits.name AS habitName " +
+            "FROM habitHistory " +
+            "INNER JOIN habits ON habits.id = habitHistory.habitId " +
+            "WHERE habitHistory.habitId = habits.Id " +
+            "AND habitHistory.habitId = :habitId " +
+            "AND habitHistory.dateTimeTimestamp > :from")
+    suspend fun getHabitHistoryItemDtosByHabitId(from: Long, habitId: Long) : List<HabitHistoryItemDto>
 
     @Query("SELECT habitHistory.id AS id, " +
             "habitHistory.habitId as habitId, " +

@@ -7,7 +7,7 @@ data class Habit(
     val id: Long = 0,
     val name: String,
     val start: Long,
-    var nextOccurrence: Long,
+    var nextOccurrence: Long = 0,
     val repetition: String,
     val category: HabitCategory,
     val isDeleted: Boolean = false

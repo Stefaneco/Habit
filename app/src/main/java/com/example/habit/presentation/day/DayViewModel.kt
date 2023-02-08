@@ -2,7 +2,9 @@ package com.example.habit.presentation.day
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.habit.domain.IHabitRepository
+import com.example.habit.domain.interactors.UpsertHabitHistoryItems
+import com.example.habit.domain.repositories.IHabitHistoryRepository
+import com.example.habit.domain.repositories.IHabitRepository
 import com.example.habit.domain.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DayViewModel @Inject constructor(
-    private val habitRepository: IHabitRepository
+    private val habitRepository: IHabitRepository,
+    private val habitHistoryRepository: IHabitHistoryRepository,
+    private val upsertHabitHistoryItems: UpsertHabitHistoryItems
 ): ViewModel() {
 
     private val _state = MutableStateFlow(DayScreenState())
@@ -27,7 +31,7 @@ class DayViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(
                 isLoading = false,
-                habitHistoryItems = habitRepository.getHabitHistoryItems(
+                habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                     fromTimestamp = DateTimeUtil.dayStartEpochMillis(),
                     toTimestamp = DateTimeUtil.dayEndEpochMillis()
                 ).sortedBy { item -> item.dateTimeTimestamp }
@@ -56,7 +60,7 @@ class DayViewModel @Inject constructor(
                     isHabitItemUpdating = true
                 ) }
                 viewModelScope.launch {
-                    habitRepository.upsertHabitHistoryItem(updatedItem)
+                    upsertHabitHistoryItems(updatedItem)
                     _state.update { it.copy(
                         habitHistoryItems = habitHistoryItems
                             .map {
@@ -72,7 +76,7 @@ class DayViewModel @Inject constructor(
                 viewModelScope.launch {
                     _state.update { it.copy(
                         date = newDate,
-                        habitHistoryItems = habitRepository.getHabitHistoryItems(
+                        habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
@@ -88,7 +92,7 @@ class DayViewModel @Inject constructor(
                 viewModelScope.launch {
                     _state.update { it.copy(
                         date = newDate,
-                        habitHistoryItems = habitRepository.getHabitHistoryItems(
+                        habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
                         ).sortedBy { item -> item.dateTimeTimestamp },
@@ -128,7 +132,7 @@ class DayViewModel @Inject constructor(
                     isItemEditorOpen = false
                 ) }
                 viewModelScope.launch {
-                    habitRepository.upsertHabitHistoryItem(updatedItem)
+                    upsertHabitHistoryItems(updatedItem)
                     _state.update { it.copy(
                         habitHistoryItems = habitHistoryItems
                             .map {

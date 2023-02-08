@@ -1,12 +1,12 @@
 package com.example.habit.domain.work
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.habit.domain.IHabitRepository
+import com.example.habit.domain.interactors.UpsertHabitHistoryItems
 import com.example.habit.domain.model.HabitHistoryItem
+import com.example.habit.domain.repositories.IHabitRepository
 import com.example.habit.domain.util.DateTimeUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -15,10 +15,9 @@ import dagger.assisted.AssistedInject
 class DailyWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    val habitRepository: IHabitRepository
+    val habitRepository: IHabitRepository,
+    val upsertHabitHistoryItems: UpsertHabitHistoryItems
     ): CoroutineWorker(context,workerParams) {
-
-    //@Inject lateinit var habitRepository: IHabitRepository
 
     override suspend fun doWork(): Result {
         //Get all habits
@@ -41,10 +40,9 @@ class DailyWorker @AssistedInject constructor(
                 newHabitHistoryItems.add(newHabitHistoryItem)
             }
         }
-        habitRepository.insertHabitHistoryItems(newHabitHistoryItems)
+        upsertHabitHistoryItems(newHabitHistoryItems)
         habitRepository.updateHabits(habits)
 
-        Log.e("DailyWorker", "Worked!")
         return Result.success()
     }
 }
