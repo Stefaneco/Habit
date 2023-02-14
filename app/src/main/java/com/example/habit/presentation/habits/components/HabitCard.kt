@@ -29,7 +29,7 @@ fun HabitCard(
 ) {
     var offsetX by remember { mutableStateOf(0f) }
     val density = LocalDensity.current
-    val midOffsetX = 100f * density.density
+    val midOffsetX = 80f * density.density
     val maxOffsetX = 150f * density.density
     Box(){
 
@@ -92,7 +92,7 @@ fun HabitCard(
                         if (offsetX - delta > 0) offsetX -= delta
                     },
                     onDragStopped = {
-                        offsetX = if (offsetX >= maxOffsetX -50f) maxOffsetX
+                        offsetX = if (offsetX >= maxOffsetX - 50f) maxOffsetX
                         else if (offsetX >= midOffsetX - 50f) midOffsetX
                         else 0f
                     }
