@@ -87,4 +87,11 @@ interface HabitHistoryDao {
 
     @Query("DELETE FROM habitHistory WHERE ((habitId=:habitId) AND (dateTimeTimestamp > :deleteAfterTimestamp))")
     suspend fun deletePlannedHistoryItemsByHabitId(habitId: Long, deleteAfterTimestamp: Long)
+
+    @Query("SELECT MIN(dateTimeTimestamp) FROM habitHistory ")
+    suspend fun getMinHabitHistoryItemTimestamp() : Long
+
+    @Query("SELECT MAX(dateTimeTimestamp) FROM habitHistory ")
+    suspend fun getMaxHabitHistoryItemTimestamp() : Long
+
 }

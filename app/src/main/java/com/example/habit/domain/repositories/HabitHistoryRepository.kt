@@ -2,6 +2,8 @@ package com.example.habit.domain.repositories
 
 import com.example.habit.data.room.AppDatabase
 import com.example.habit.domain.model.HabitHistoryItem
+import com.example.habit.domain.util.DateTimeUtil
+import kotlinx.datetime.LocalDate
 
 class HabitHistoryRepository(
     db: AppDatabase,
@@ -41,5 +43,15 @@ class HabitHistoryRepository(
     ): List<HabitHistoryItem> {
         return habitHistoryDao.getHabitHistoryItemDtosByHabitId(fromTimestamp,habitId)
             .map { HabitHistoryItem.fromHabitHistoryItemDto(it) }
+    }
+
+    override suspend fun getEarliestHabitHistoryItemDate(): LocalDate {
+        val minTimestamp = habitHistoryDao.getMinHabitHistoryItemTimestamp()
+        return DateTimeUtil.fromEpochMillis(minTimestamp).date
+    }
+
+    override suspend fun getLatestHabitHistoryItemDate(): LocalDate {
+        val maxTimestamp = habitHistoryDao.getMaxHabitHistoryItemTimestamp()
+        return DateTimeUtil.fromEpochMillis(maxTimestamp).date
     }
 }

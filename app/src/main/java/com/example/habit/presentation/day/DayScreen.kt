@@ -39,7 +39,10 @@ fun DayScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(DayScreenEvent.MinusOneDay) }) {
+                    IconButton(
+                        onClick = { onEvent(DayScreenEvent.MinusOneDay) },
+                        enabled = state.isPriorDataAvailable
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowLeft,
                             contentDescription = ""
@@ -53,7 +56,10 @@ fun DayScreen(
                             contentDescription = ""
                         )
                     }
-                    IconButton(onClick = { onEvent(DayScreenEvent.PlusOneDay) }) {
+                    IconButton(
+                        onClick = { onEvent(DayScreenEvent.PlusOneDay) },
+                        enabled = state.isFutureDataAvailable
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.ArrowRight,
                             contentDescription = ""
@@ -85,7 +91,7 @@ fun DayScreen(
     ) { paddingValues ->
         Column(modifier = Modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
+            .pointerInput(state.isFutureDataAvailable, state.isPriorDataAvailable) {
                 detectDragGestures(
                     onDrag = { change, dragAmount ->
                         change.consume()
@@ -104,11 +110,15 @@ fun DayScreen(
                         when (direction) {
                             0 -> {
                                 // right swipe code here
-                                onEvent(DayScreenEvent.MinusOneDay)
+                                if(state.isPriorDataAvailable){
+                                    onEvent(DayScreenEvent.MinusOneDay)
+                                }
                             }
                             1 -> {
                                 // left swipe code here
-                                onEvent(DayScreenEvent.PlusOneDay)
+                                if(state.isFutureDataAvailable){
+                                    onEvent(DayScreenEvent.PlusOneDay)
+                                }
                             }
                         }
                     }

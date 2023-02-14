@@ -15,6 +15,10 @@ data class DayScreenState (
     val isHabitItemUpdating : Boolean = false,
     val selectedItemTime : LocalTime = DateTimeUtil.now().time,
     val isItemEditorOpen : Boolean = false,
-    val selectedItemId: Long = 0
+    val selectedItemId: Long = 0,
+    val earliestItemDate: LocalDate = date,
+    val latestItemDate: LocalDate = date,
+    val isPriorDataAvailable: Boolean = false,
+    val isFutureDataAvailable: Boolean = false
     )
 

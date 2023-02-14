@@ -1,5 +1,6 @@
 package com.example.habit.presentation.day
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habit.domain.interactors.UpsertHabitHistoryItems
@@ -29,13 +30,21 @@ class DayViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            val earliestItemDate = habitHistoryRepository.getEarliestHabitHistoryItemDate()
+            val latestItemDate = habitHistoryRepository.getLatestHabitHistoryItemDate()
             _state.update { it.copy(
                 isLoading = false,
                 habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                     fromTimestamp = DateTimeUtil.dayStartEpochMillis(),
                     toTimestamp = DateTimeUtil.dayEndEpochMillis()
-                ).sortedBy { item -> item.dateTimeTimestamp }
+                ).sortedBy { item -> item.dateTimeTimestamp },
+                earliestItemDate = earliestItemDate,
+                isPriorDataAvailable = earliestItemDate < it.date,
+                latestItemDate = latestItemDate,
+                isFutureDataAvailable = latestItemDate > it.date
             ) }
+            Log.i("DayViewModel", "EarliestDate: $earliestItemDate")
+            Log.i("DayViewModel", "LatestDate: $latestItemDate")
         }
     }
 
@@ -82,7 +91,9 @@ class DayViewModel @Inject constructor(
                         ).sortedBy { item -> item.dateTimeTimestamp },
                         dateString = dateResource.default,
                         dateStringResource = dateResource.resource,
-                        isItemEditorOpen = false
+                        isItemEditorOpen = false,
+                        isPriorDataAvailable = it.earliestItemDate < newDate,
+                        isFutureDataAvailable = it.latestItemDate > newDate
                     ) }
                 }
             }
@@ -98,7 +109,9 @@ class DayViewModel @Inject constructor(
                         ).sortedBy { item -> item.dateTimeTimestamp },
                         dateString = dateResource.default,
                         dateStringResource = dateResource.resource,
-                        isItemEditorOpen = false
+                        isItemEditorOpen = false,
+                        isPriorDataAvailable = it.earliestItemDate < newDate,
+                        isFutureDataAvailable = it.latestItemDate > newDate
                     ) }
                 }
             }
