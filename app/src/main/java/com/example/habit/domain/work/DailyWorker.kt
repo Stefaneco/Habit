@@ -30,7 +30,7 @@ class DailyWorker @AssistedInject constructor(
         val minNextOccurrenceTimestamp = DateTimeUtil.dayEndEpochMillis(minNextOccurrenceDateTime.date)
         val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
         for(habit in habits){
-            if (minNextOccurrenceTimestamp >= habit.nextOccurrence){
+            while (minNextOccurrenceTimestamp >= habit.nextOccurrence){
                 val newHabitHistoryItem = HabitHistoryItem(
                     habitId = habit.id,
                     isDone = false,
@@ -45,4 +45,5 @@ class DailyWorker @AssistedInject constructor(
 
         return Result.success()
     }
+
 }
