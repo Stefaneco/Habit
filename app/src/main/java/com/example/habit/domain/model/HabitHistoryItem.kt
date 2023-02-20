@@ -2,14 +2,16 @@ package com.example.habit.domain.model
 
 import com.example.habit.data.room.dto.HabitHistoryItemDto
 import com.example.habit.data.room.entities.HabitHistoryItemEntity
+import com.example.habit.domain.util.DateTimeUtil
+import kotlinx.datetime.LocalDateTime
 
 data class HabitHistoryItem(
     val id: Long = 0,
     val habitName: String = "",
     val habitId: Long,
     var isDone: Boolean = false,
-    var doneTimestamp: Long? = null,
-    val dateTimeTimestamp: Long
+    var doneDateTime: LocalDateTime? = null,
+    val dateTime: LocalDateTime
 ) {
     companion object {
         fun fromHabitHistoryItemDto(habitHistoryItemDto: HabitHistoryItemDto): HabitHistoryItem {
@@ -18,8 +20,8 @@ data class HabitHistoryItem(
                 habitName = habitHistoryItemDto.habitName,
                 habitId = habitHistoryItemDto.habitId,
                 isDone = habitHistoryItemDto.isDone,
-                doneTimestamp = habitHistoryItemDto.doneTimestamp,
-                dateTimeTimestamp = habitHistoryItemDto.dateTimeTimestamp
+                doneDateTime = habitHistoryItemDto.doneTimestamp?.let { DateTimeUtil.fromEpochMillis(it) },
+                dateTime = DateTimeUtil.fromEpochMillis(habitHistoryItemDto.dateTimeTimestamp)
             )
         }
 
@@ -28,8 +30,8 @@ data class HabitHistoryItem(
                 id = habitHistoryItem.id,
                 habitId = habitHistoryItem.habitId,
                 isDone = habitHistoryItem.isDone,
-                doneTimestamp = habitHistoryItem.doneTimestamp,
-                dateTimeTimestamp = habitHistoryItem.dateTimeTimestamp
+                doneTimestamp = habitHistoryItem.doneDateTime?.let { DateTimeUtil.toEpochMillis(it) },
+                dateTimeTimestamp = DateTimeUtil.toEpochMillis(habitHistoryItem.dateTime)
             )
         }
     }

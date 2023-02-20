@@ -109,6 +109,10 @@ object DateTimeUtil {
         }
     }
 
+    fun formatTime(dateTime: LocalDateTime): String {
+        return formatTime(dateTime.time)
+    }
+
     fun formatTime(time: LocalTime): String {
         val hour = if(time.hour < 10) "0${time.hour}" else time.hour
         val minute = if(time.minute < 10) "0${time.minute}" else time.minute

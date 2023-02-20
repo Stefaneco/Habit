@@ -23,11 +23,11 @@ class UpdateHabit(
 
     suspend operator fun invoke(habit: Habit, currentDateTime: LocalDateTime = DateTimeUtil.now()){
         updateFutureHabitHistoryItemsOfHabit(habit, currentDateTime)
-        if(DateTimeUtil.fromEpochMillis(habit.start).time != DateTimeUtil.fromEpochMillis(habit.nextOccurrence).time){
+        if(habit.start.time != habit.nextOccurrence.time){
             val newNextOccurrenceDateTime =
-                DateTimeUtil.fromEpochMillis(habit.nextOccurrence).date
-                    .atTime(DateTimeUtil.fromEpochMillis(habit.start).time)
-            habit.nextOccurrence = DateTimeUtil.toEpochMillis(newNextOccurrenceDateTime)
+                habit.nextOccurrence.date
+                    .atTime(habit.start.time)
+            habit.nextOccurrence = newNextOccurrenceDateTime
         }
 
         habit.category.id = getCategoryIdByNameOrInsertCategory(habit.category)
@@ -40,10 +40,10 @@ class UpdateHabit(
             habitId = habit.id
         )
         val newFutureHistoryItems = futureHistoryItems.map {
-            val newDateTime = DateTimeUtil.fromEpochMillis(it.dateTimeTimestamp).date
-                .atTime(DateTimeUtil.fromEpochMillis(habit.start).time)
+            val newDateTime = it.dateTime.date
+                .atTime(habit.start.time)
             it.copy(
-                dateTimeTimestamp = DateTimeUtil.toEpochMillis(newDateTime),
+                dateTime = newDateTime,
                 habitName = habit.name
             )
         }

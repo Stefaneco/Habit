@@ -37,7 +37,7 @@ class DayViewModel @Inject constructor(
                 habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                     fromTimestamp = DateTimeUtil.dayStartEpochMillis(),
                     toTimestamp = DateTimeUtil.dayEndEpochMillis()
-                ).sortedBy { item -> item.dateTimeTimestamp },
+                ).sortedBy { item -> item.dateTime },
                 earliestItemDate = earliestItemDate,
                 isPriorDataAvailable = earliestItemDate < it.date,
                 latestItemDate = latestItemDate,
@@ -63,7 +63,7 @@ class DayViewModel @Inject constructor(
                 val habitHistoryItems = _state.value.habitHistoryItems
                 val updatedItem = habitHistoryItems.first { item -> item.id == event.id }.apply {
                     isDone = !isDone
-                    doneTimestamp = if(isDone) DateTimeUtil.nowEpochMillis() else null
+                    doneDateTime = if(isDone) DateTimeUtil.now() else null
                 }
                 _state.update { it.copy(
                     isHabitItemUpdating = true
@@ -74,7 +74,7 @@ class DayViewModel @Inject constructor(
                         habitHistoryItems = habitHistoryItems
                             .map {
                                 old -> if(old.id == updatedItem.id) updatedItem else old }
-                            .sortedBy { item -> item.dateTimeTimestamp },
+                            .sortedBy { item -> item.dateTime },
                         isHabitItemUpdating = false
                     ) }
                 }
@@ -88,7 +88,7 @@ class DayViewModel @Inject constructor(
                         habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
-                        ).sortedBy { item -> item.dateTimeTimestamp },
+                        ).sortedBy { item -> item.dateTime },
                         dateString = dateResource.default,
                         dateStringResource = dateResource.resource,
                         isItemEditorOpen = false,
@@ -106,7 +106,7 @@ class DayViewModel @Inject constructor(
                         habitHistoryItems = habitHistoryRepository.getHabitHistoryItems(
                             fromTimestamp = DateTimeUtil.dayStartEpochMillis(newDate),
                             toTimestamp = DateTimeUtil.dayEndEpochMillis(newDate)
-                        ).sortedBy { item -> item.dateTimeTimestamp },
+                        ).sortedBy { item -> item.dateTime },
                         dateString = dateResource.default,
                         dateStringResource = dateResource.resource,
                         isItemEditorOpen = false,
@@ -136,9 +136,7 @@ class DayViewModel @Inject constructor(
                 val habitHistoryItems = _state.value.habitHistoryItems
                 val updatedItem = habitHistoryItems.first { item -> item.id == _state.value.selectedItemId }.apply {
                     isDone = true
-                    doneTimestamp = DateTimeUtil.toEpochMillis(
-                        DateTimeUtil.fromEpochMillis(dateTimeTimestamp).date.atTime(_state.value.selectedItemTime)
-                    )
+                    doneDateTime = dateTime.date.atTime(_state.value.selectedItemTime)
                 }
                 _state.update { it.copy(
                     isHabitItemUpdating = true,
@@ -150,7 +148,7 @@ class DayViewModel @Inject constructor(
                         habitHistoryItems = habitHistoryItems
                             .map {
                                     old -> if(old.id == updatedItem.id) updatedItem else old }
-                            .sortedBy { item -> item.dateTimeTimestamp },
+                            .sortedBy { item -> item.dateTime },
                         isHabitItemUpdating = false
                     ) }
                 }

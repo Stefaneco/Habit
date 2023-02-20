@@ -2,12 +2,14 @@ package com.example.habit.domain.model
 
 import com.example.habit.data.room.dto.HabitDto
 import com.example.habit.data.room.entities.HabitEntity
+import com.example.habit.domain.util.DateTimeUtil
+import kotlinx.datetime.LocalDateTime
 
 data class Habit(
     val id: Long = 0,
     val name: String,
-    val start: Long,
-    var nextOccurrence: Long = 0,
+    val start: LocalDateTime,
+    var nextOccurrence: LocalDateTime = LocalDateTime(0,0,0,0,0),
     val repetition: String,
     val category: HabitCategory,
     val isDeleted: Boolean = false
@@ -27,8 +29,8 @@ data class Habit(
             return Habit(
                 id = habitDto.id,
                 name = habitDto.name,
-                start = habitDto.start,
-                nextOccurrence = habitDto.nextOccurrence,
+                start = DateTimeUtil.fromEpochMillis(habitDto.start),
+                nextOccurrence = DateTimeUtil.fromEpochMillis(habitDto.nextOccurrence),
                 repetition = habitDto.repetition,
                 category = HabitCategory(habitDto.categoryId, habitDto.categoryName),
                 isDeleted = habitDto.isDeleted
@@ -40,8 +42,8 @@ data class Habit(
             return HabitEntity(
                 id = habit.id,
                 name = habit.name,
-                start = habit.start,
-                nextOccurrence = habit.nextOccurrence,
+                start = DateTimeUtil.toEpochMillis(habit.start),
+                nextOccurrence = DateTimeUtil.toEpochMillis(habit.nextOccurrence),
                 repetition = habit.repetition,
                 categoryId = habit.category.id
             )

@@ -31,13 +31,13 @@ class UpsertHabitHistoryItems(
     }
 
     private fun updateHabitHistoryItemNotification(habitHistoryItem: HabitHistoryItem, currentDateTime: LocalDateTime) {
-        if(!habitHistoryItem.isDone && habitHistoryItem.dateTimeTimestamp > DateTimeUtil.toEpochMillis(currentDateTime)){
+        if(!habitHistoryItem.isDone && habitHistoryItem.dateTime > currentDateTime){
             Log.i("UpsertHabitHistoryItems", "Updating notification")
             alarmScheduler.schedule(
                 HabitReminderInfo(
                     id = habitHistoryItem.id.toInt(),
                     habitName = habitHistoryItem.habitName,
-                    time = habitHistoryItem.dateTimeTimestamp
+                    time = DateTimeUtil.toEpochMillis(habitHistoryItem.dateTime)
                 )
             )
         }

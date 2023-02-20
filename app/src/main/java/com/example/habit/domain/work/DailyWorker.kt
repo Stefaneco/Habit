@@ -8,8 +8,10 @@ import com.example.habit.domain.interactors.UpsertHabitHistoryItems
 import com.example.habit.domain.model.HabitHistoryItem
 import com.example.habit.domain.repositories.IHabitRepository
 import com.example.habit.domain.util.DateTimeUtil
+import com.example.habit.domain.util.plusAssign
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.datetime.DatePeriod
 
 @HiltWorker
 class DailyWorker @AssistedInject constructor(
@@ -27,16 +29,16 @@ class DailyWorker @AssistedInject constructor(
 
         val habits = habitRepository.getAllHabits()
         val minNextOccurrenceDateTime = DateTimeUtil.nowPlus(days = 1)
-        val minNextOccurrenceTimestamp = DateTimeUtil.dayEndEpochMillis(minNextOccurrenceDateTime.date)
         val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
         for(habit in habits){
-            while (minNextOccurrenceTimestamp >= habit.nextOccurrence){
+            while (minNextOccurrenceDateTime >= habit.nextOccurrence){
                 val newHabitHistoryItem = HabitHistoryItem(
                     habitId = habit.id,
                     isDone = false,
-                    dateTimeTimestamp = habit.nextOccurrence
+                    dateTime = habit.nextOccurrence
                 )
-                habit.nextOccurrence += DateTimeUtil.DAY_IN_MILLIS
+                //habit.nextOccurrence += DateTimeUtil.DAY_IN_MILLIS
+                habit.nextOccurrence += DatePeriod(days = 1)
                 newHabitHistoryItems.add(newHabitHistoryItem)
             }
         }

@@ -51,8 +51,8 @@ fun HabitHistoryItemCard(
             ) {
                 Text(text = DateTimeUtil.formatTime(
                     if(habitHistoryItem.isDone)
-                        habitHistoryItem.doneTimestamp!!
-                    else habitHistoryItem.dateTimeTimestamp
+                        habitHistoryItem.doneDateTime!!
+                    else habitHistoryItem.dateTime
                 ))
                 Spacer(modifier = Modifier.padding(4.dp))
                 Icon(imageVector = Icons.Filled.Schedule, contentDescription = "")

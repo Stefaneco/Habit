@@ -35,9 +35,8 @@ class CreateHabit(
     }
 
     private suspend fun createHabitHistoryItemsForHabit(habit: Habit, currentDateTime: LocalDateTime) {
-        val newHabitDateTime = DateTimeUtil.fromEpochMillis(habit.start)
-        val newHabitDate = newHabitDateTime.date
-        val newHabitTime = newHabitDateTime.time
+        val newHabitDate = habit.start.date
+        val newHabitTime = habit.start.time
 
         val newHabitHistoryItems = mutableListOf<HabitHistoryItem>()
         for(date in newHabitDate..currentDateTime.date.plus(DatePeriod(days = 1))){
@@ -45,7 +44,7 @@ class CreateHabit(
                 HabitHistoryItem(
                     habitId = habit.id,
                     habitName = habit.name,
-                    dateTimeTimestamp = DateTimeUtil.toEpochMillis(date.atTime(newHabitTime))
+                    dateTime = date.atTime(newHabitTime)
                 )
             )
         }

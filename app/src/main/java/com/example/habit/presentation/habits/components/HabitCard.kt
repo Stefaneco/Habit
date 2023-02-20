@@ -31,7 +31,7 @@ fun HabitCard(
     val density = LocalDensity.current
     val midOffsetX = 80f * density.density
     val maxOffsetX = 150f * density.density
-    Box(){
+    Box() {
 
         //DELETE AND EDIT CARD
         Card(
@@ -115,7 +115,8 @@ fun HabitCard(
                         text = habit.name,
                         style = MaterialTheme.typography.headlineSmall,
                         overflow =TextOverflow.Ellipsis,
-                        maxLines =1)
+                        maxLines =1
+                    )
                     Text(text = habit.category.name, style = MaterialTheme.typography.bodySmall)
                 }
                 Row(
@@ -124,7 +125,7 @@ fun HabitCard(
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(text = DateTimeUtil.formatTime(start = habit.start))
+                    Text(text = DateTimeUtil.formatTime(habit.start))
                     Spacer(modifier = Modifier.padding(4.dp))
                     Icon(imageVector = Icons.Filled.Schedule, contentDescription = "")
                 }

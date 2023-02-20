@@ -2,11 +2,11 @@ package com.example.habit.presentation.habits
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.habit.domain.repositories.IHabitRepository
 import com.example.habit.domain.interactors.CreateHabit
 import com.example.habit.domain.interactors.UpdateHabit
 import com.example.habit.domain.model.Habit
 import com.example.habit.domain.model.HabitCategory
+import com.example.habit.domain.repositories.IHabitRepository
 import com.example.habit.domain.util.DateTimeUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +32,7 @@ class HabitsViewModel @Inject constructor(
             _state.update { it.copy(
                 isLoading = false,
                 habits = habitRepository.getAllHabits().sortedBy {
-                    habit -> DateTimeUtil.fromEpochMillis(habit.start).time }
+                    habit -> habit.start.time }
             ) }
         }
     }
@@ -55,19 +55,20 @@ class HabitsViewModel @Inject constructor(
                     val startDateTime = newHabitDate.atTime(newHabitTime)
                     val newHabit = Habit(
                         name = newHabitName.trim(),
-                        start = DateTimeUtil.toEpochMillis(startDateTime),
+                        start = startDateTime,
                         nextOccurrence =
-                        max(DateTimeUtil.toEpochMillis(
+                        DateTimeUtil.fromEpochMillis(
+                            max(DateTimeUtil.toEpochMillis(
                             DateTimeUtil.now().date.atTime(newHabitTime)
                         ) + DateTimeUtil.DAY_IN_MILLIS * 2,
-                            DateTimeUtil.toEpochMillis(startDateTime)),
+                            DateTimeUtil.toEpochMillis(startDateTime))),
                         category = HabitCategory(0,newHabitCategory),
                         repetition = newHabitRepetition
                     )
                     viewModelScope.launch {
                         val newHabitId = createHabit(newHabit)
                         val newHabitList = (habits + listOf(newHabit.copy(id = newHabitId)))
-                            .sortedBy { DateTimeUtil.fromEpochMillis(it.start).time }
+                            .sortedBy { it.start.time }
 
                         _state.update { it.copy(
                             isNewHabitCreatorOpen = false,
@@ -140,12 +141,12 @@ class HabitsViewModel @Inject constructor(
                 ) }
             }
             is HabitsScreenEvent.EditEditedHabitTime -> {
-                val currentDateTime = DateTimeUtil.fromEpochMillis(_state.value.editedHabit?.start
-                    ?: throw NullPointerException("Edited Habit is null"))
+                val currentDateTime = _state.value.editedHabit?.start
+                    ?: throw NullPointerException("Edited Habit is null")
                 val newDateTime = currentDateTime.date.atTime(event.time)
                 _state.update { it.copy(
                     editedHabit = it.editedHabit?.copy(
-                        start = DateTimeUtil.toEpochMillis(newDateTime)
+                        start = newDateTime
                     )
                 ) }
             }

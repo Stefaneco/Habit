@@ -132,7 +132,7 @@ class StatisticsViewModel @Inject constructor(
 
         val groupedByDateItems = habitItems.reversed()
             .filter { it.isDone }
-            .groupBy { DateTimeUtil.fromEpochMillis(it.dateTimeTimestamp).date }
+            .groupBy { it.dateTime.date }
         val dateMap = mutableMapOf<LocalDate, List<HabitHistoryItem>>()
         for(date in _state.value.startDate.._state.value.endDate){
             dateMap[date] = groupedByDateItems[date] ?: emptyList()
@@ -180,12 +180,12 @@ class StatisticsViewModel @Inject constructor(
         val habit = habitRepository.getHabit(_state.value.selectedHabitId)
 
         val completionTimeDataSet = habitItems
-            .filter { it.doneTimestamp != null }
-            .map { DateTimeUtil.fromEpochMillis(it.doneTimestamp!!) }
+            .filter { it.doneDateTime != null }
+            .map { it.doneDateTime!! }
 
         _state.update { it.copy(
             completionTimeDataSet = completionTimeDataSet,
-            perfectCompletionTime = DateTimeUtil.fromEpochMillis(habit.start).time
+            perfectCompletionTime = habit.start.time
         ) }
     }
 }

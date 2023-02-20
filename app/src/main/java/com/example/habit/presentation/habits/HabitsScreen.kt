@@ -15,7 +15,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.habit.R
-import com.example.habit.domain.util.DateTimeUtil
 import com.example.habit.presentation.habits.components.HabitCard
 import com.example.habit.presentation.habits.components.HabitCreator
 import com.example.habit.presentation.habits.components.HabitEditor
@@ -79,7 +78,7 @@ fun HabitsScreen(
             with(state.editedHabit){
                 HabitEditor(
                     name = name,
-                    time = DateTimeUtil.fromEpochMillis(start).time,
+                    time = start.time,
                     category = category.name,
                     isValidHabit = state.isValidEditedHabit,
                     onEvent = onEvent,
