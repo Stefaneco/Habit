@@ -74,8 +74,8 @@ class CreateHabitTest {
         val category = HabitCategory(0, categoryName)
         val newHabit = Habit(
             name = "Habit",
-            start = start,
-            nextOccurrence = start + DateTimeUtil.DAY_IN_MILLIS,
+            start = startDateTime,
+            nextOccurrence = DateTimeUtil.fromEpochMillis(start + DateTimeUtil.DAY_IN_MILLIS),
             repetition = Repetition.DAILY,
             category = category
         )
@@ -133,8 +133,8 @@ class CreateHabitTest {
         val category = HabitCategory(0, categoryName)
         val newHabit = Habit(
             name = "Habit",
-            start = start,
-            nextOccurrence = start + DateTimeUtil.DAY_IN_MILLIS,
+            start = startDateTime,
+            nextOccurrence = DateTimeUtil.fromEpochMillis(start + DateTimeUtil.DAY_IN_MILLIS),
             repetition = Repetition.DAILY,
             category = category
         )
@@ -194,8 +194,8 @@ class CreateHabitTest {
         val category = HabitCategory(0, categoryName)
         val newHabit = Habit(
             name = "Habit",
-            start = start,
-            nextOccurrence = start + DateTimeUtil.DAY_IN_MILLIS,
+            start = startDateTime,
+            nextOccurrence = DateTimeUtil.fromEpochMillis(start + DateTimeUtil.DAY_IN_MILLIS),
             repetition = Repetition.DAILY,
             category = category
         )
@@ -241,8 +241,8 @@ class CreateHabitTest {
         val category = HabitCategory(0, categoryName)
         val newHabit = Habit(
             name = "Habit",
-            start = start,
-            nextOccurrence = start + DateTimeUtil.DAY_IN_MILLIS,
+            start = startDateTime,
+            nextOccurrence = DateTimeUtil.fromEpochMillis(start + DateTimeUtil.DAY_IN_MILLIS),
             repetition = Repetition.DAILY,
             category = category
         )
@@ -298,8 +298,8 @@ class CreateHabitTest {
         val category = HabitCategory(0, categoryName)
         val newHabit = Habit(
             name = "Habit",
-            start = start,
-            nextOccurrence = start + DateTimeUtil.DAY_IN_MILLIS,
+            start = startDateTime,
+            nextOccurrence = DateTimeUtil.fromEpochMillis(start + DateTimeUtil.DAY_IN_MILLIS),
             repetition = Repetition.DAILY,
             category = category
         )

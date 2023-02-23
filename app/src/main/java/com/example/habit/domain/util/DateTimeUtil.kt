@@ -32,6 +32,14 @@ object DateTimeUtil {
             .toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
+    fun dayEnd(date: LocalDate): LocalDateTime {
+        return date.atTime(23,59,59,999)
+    }
+
+    fun dayEnd(dateTime: LocalDateTime): LocalDateTime {
+        return dateTime.date.atTime(23,59,59,999)
+    }
+
     fun now(): LocalDateTime {
         return Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     }

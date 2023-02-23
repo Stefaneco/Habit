@@ -69,11 +69,12 @@ class UpdateHabitTest {
         habit = Habit(
             id = 1,
             name = "Habit",
-            start = start,
-            nextOccurrence = max(
+            start = startDateTime,
+            nextOccurrence = DateTimeUtil.fromEpochMillis(
+                max(
                 start,
                 DateTimeUtil.toEpochMillis(currentDateTime) + DateTimeUtil.DAY_IN_MILLIS * 2
-            ),
+            )),
             repetition = Repetition.DAILY,
             category = category
         )
@@ -123,18 +124,18 @@ class UpdateHabitTest {
     @Test
     fun updateHabitPlannedTimeToFutureHourFromFutureHour(){
         val newTime = LocalTime(20,0)
-        val newDateTime = DateTimeUtil.fromEpochMillis(habit.start).date.atTime(newTime)
+        val newDateTime = habit.start.date.atTime(newTime)
         val newDateTimeTimestamp = DateTimeUtil.toEpochMillis(newDateTime)
 
         runTest {
-            updateHabit(habit.copy(start = newDateTimeTimestamp), currentDateTime)
+            updateHabit(habit.copy(start = newDateTime), currentDateTime)
 
             val updatedHabit = db.habitDao().getHabit(habit.id)
             val alarms = (alarmScheduler as FakeAlarmScheduler).getCurrentReminders()
 
             assertEquals(newDateTimeTimestamp, updatedHabit.start)
             assertEquals(
-                DateTimeUtil.fromEpochMillis(habit.nextOccurrence).date.atTime(newTime),
+                habit.nextOccurrence.date.atTime(newTime),
                 DateTimeUtil.fromEpochMillis(updatedHabit.nextOccurrence)
             )
             assertEquals(2, alarms.size)
@@ -147,18 +148,18 @@ class UpdateHabitTest {
     @Test
     fun updateHabitPlannedTimeToPastHourFromFutureHour(){
         val newTime = LocalTime(1,0)
-        val newDateTime = DateTimeUtil.fromEpochMillis(habit.start).date.atTime(newTime)
+        val newDateTime = habit.start.date.atTime(newTime)
         val newDateTimeTimestamp = DateTimeUtil.toEpochMillis(newDateTime)
 
         runTest {
-            updateHabit(habit.copy(start = newDateTimeTimestamp), currentDateTime)
+            updateHabit(habit.copy(start = newDateTime), currentDateTime)
 
             val updatedHabit = db.habitDao().getHabit(habit.id)
             val alarms = (alarmScheduler as FakeAlarmScheduler).getCurrentReminders()
 
             assertEquals(newDateTimeTimestamp, updatedHabit.start)
             assertEquals(
-                DateTimeUtil.fromEpochMillis(habit.nextOccurrence).date.atTime(newTime),
+                habit.nextOccurrence.date.atTime(newTime),
                 DateTimeUtil.fromEpochMillis(updatedHabit.nextOccurrence)
             )
             assertEquals(1, alarms.size)
@@ -179,18 +180,18 @@ class UpdateHabitTest {
         )
         (alarmScheduler as FakeAlarmScheduler).removeRemindersBeforeDateTime(currentDateTime)
         val newTime = LocalTime(1,0)
-        val newDateTime = DateTimeUtil.fromEpochMillis(habit.start).date.atTime(newTime)
+        val newDateTime = habit.start.date.atTime(newTime)
         val newDateTimeTimestamp = DateTimeUtil.toEpochMillis(newDateTime)
 
         runTest {
-            updateHabit(habit.copy(start = newDateTimeTimestamp), currentDateTime)
+            updateHabit(habit.copy(start = newDateTime), currentDateTime)
 
             val updatedHabit = db.habitDao().getHabit(habit.id)
             val alarms = (alarmScheduler as FakeAlarmScheduler).getCurrentReminders()
 
             assertEquals(newDateTimeTimestamp, updatedHabit.start)
             assertEquals(
-                DateTimeUtil.fromEpochMillis(habit.nextOccurrence).date.atTime(newTime),
+                habit.nextOccurrence.date.atTime(newTime),
                 DateTimeUtil.fromEpochMillis(updatedHabit.nextOccurrence)
             )
             assertEquals(1, alarms.size)
@@ -211,18 +212,18 @@ class UpdateHabitTest {
         )
         (alarmScheduler as FakeAlarmScheduler).removeRemindersBeforeDateTime(currentDateTime)
         val newTime = LocalTime(20,0)
-        val newDateTime = DateTimeUtil.fromEpochMillis(habit.start).date.atTime(newTime)
+        val newDateTime = habit.start.date.atTime(newTime)
         val newDateTimeTimestamp = DateTimeUtil.toEpochMillis(newDateTime)
 
         runTest {
-            updateHabit(habit.copy(start = newDateTimeTimestamp), currentDateTime)
+            updateHabit(habit.copy(start = newDateTime), currentDateTime)
 
             val updatedHabit = db.habitDao().getHabit(habit.id)
             val alarms = (alarmScheduler as FakeAlarmScheduler).getCurrentReminders()
 
             assertEquals(newDateTimeTimestamp, updatedHabit.start)
             assertEquals(
-                DateTimeUtil.fromEpochMillis(habit.nextOccurrence).date.atTime(newTime),
+                habit.nextOccurrence.date.atTime(newTime),
                 DateTimeUtil.fromEpochMillis(updatedHabit.nextOccurrence)
             )
             assertEquals(1, alarms.size)

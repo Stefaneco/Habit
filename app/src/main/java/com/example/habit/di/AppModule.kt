@@ -3,6 +3,7 @@ package com.example.habit.di
 import com.example.habit.data.room.AppDatabase
 import com.example.habit.domain.interactors.CreateHabit
 import com.example.habit.domain.interactors.UpdateHabit
+import com.example.habit.domain.interactors.UpdateHabitsNextOccurrences
 import com.example.habit.domain.interactors.UpsertHabitHistoryItems
 import com.example.habit.domain.notification.alarm.IAlarmScheduler
 import com.example.habit.domain.repositories.*
@@ -74,5 +75,14 @@ class AppModule {
             categoryRepository,
             upsertHabitHistoryItems
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateHabitsNextOccurrences(
+        habitRepository: IHabitRepository,
+        upsertHabitHistoryItems: UpsertHabitHistoryItems
+    ) : UpdateHabitsNextOccurrences {
+        return UpdateHabitsNextOccurrences(habitRepository, upsertHabitHistoryItems)
     }
 }
