@@ -51,7 +51,10 @@ class DayViewModel @Inject constructor(
     fun onEvent(event: DayScreenEvent){
         when(event){
             is DayScreenEvent.ChangeHabitHistoryItemState -> {
-                if(_state.value.date != DateTimeUtil.now().date){
+                val habitHistoryItems = _state.value.habitHistoryItems
+                val item = habitHistoryItems.first { item -> item.id == event.id }
+
+                if(_state.value.date != DateTimeUtil.now().date && !item.isDone){
                     _state.update { it.copy(
                         isItemEditorOpen = true,
                         selectedItemId = event.id,
@@ -60,8 +63,7 @@ class DayViewModel @Inject constructor(
                     return
                 }
 
-                val habitHistoryItems = _state.value.habitHistoryItems
-                val updatedItem = habitHistoryItems.first { item -> item.id == event.id }.apply {
+                val updatedItem = item.apply {
                     isDone = !isDone
                     doneDateTime = if(isDone) DateTimeUtil.now() else null
                 }
