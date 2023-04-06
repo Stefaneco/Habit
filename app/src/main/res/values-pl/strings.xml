@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Habit</string>
+    <string name="done">Zrobione</string>
+    <string name="today">Dziś</string>
+    <string name="yesterday">Wczoraj</string>
+    <string name="tomorrow">Jutro</string>
+    <string name="my_habits">Moje Nawyki</string>
+    <string name="statistics">Statystyki</string>
+    <string name="create">Utwórz</string>
+    <string name="habit_name">Nazwa</string>
+    <string name="category">Kategoria</string>
+    <string name="new_habit">Nowy Nawyk</string>
+    <string name="all_categories">Wszystkie kategorie</string>
+    <string name="days">Dni</string>
+    <string name="select_habit">Wybierz Nawyk</string>
+    <string name="select_category_first">Najpierw wybierz kategorie</string>
+    <string name="no_data_to_display">Brak danych do wyświetlenia</string>
+    <string name="save">Zapisz</string>
+    <string name="its_time_for">Czas na</string>
+</resources>
